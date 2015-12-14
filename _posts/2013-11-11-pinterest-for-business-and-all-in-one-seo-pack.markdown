@@ -5,6 +5,8 @@ date:   2013-11-11 12:00:00 +0000
 keywords: wordpress, seo
 ---
 
+The two main steps are to create a Pinterest for Businsess account, and then confirm your website.
+
 ## Get Set up on Pinterest for Business
 
 - Go to <a title="Pinterest for Business" href="http://business.pinterest.com/">http://business.pinterest.com/</a> and click on &#8220;Join as a Business&#8221;
