@@ -8,7 +8,7 @@
 # Site settings
 title: BenHall.ca
 #email: your-email@domain.com
-description: Ben Hall is a software engineer and technical architect at Intelliware with expertise in Java and agile development methods. He might also write about goju, sailing, and life with 3 kids.
+description: Ben Hall is a software engineer and technical director at Intelliware with expertise in Java and agile development methods. He might also write about goju, sailing, and life with 3 kids.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://benhall.ca" # the base hostname & protocol for your site
 twitter_username: BenHall
