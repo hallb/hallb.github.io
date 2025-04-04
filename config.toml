@@ -1,0 +1,36 @@
+baseURL = "https://benhall.ca/"
+languageCode = "en-us"
+title = "BenHall.ca"
+theme = "ananke"
+
+# Enable features
+enableRobotsTXT = true
+enableEmoji = true
+enableGitInfo = true
+
+# Configure output formats
+[outputs]
+home = ["HTML", "RSS", "JSON"]
+
+# Configure taxonomies
+[taxonomies]
+tag = "tags"
+category = "categories"
+
+# Configure menu
+[[menu.main]]
+name = "Home"
+url = "/"
+weight = 1
+
+[[menu.main]]
+name = "About"
+url = "/about/"
+weight = 2
+
+# Configure social media and site parameters
+[params]
+twitter = "BenHall"
+github = "hallb"
+description = "Ben Hall is a software engineer and technical director at Intelliware with expertise in Java and agile development methods. He might also write about goju-ryu karate, sailing, and life with 3 kids."
+summaryLength = 20 
