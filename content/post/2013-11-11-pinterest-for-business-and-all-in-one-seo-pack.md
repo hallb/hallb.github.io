@@ -2,7 +2,6 @@
 title: "Pinterest for Business and All in One SEO Pack"
 date: 2013-11-11T12:00:00+00:00
 tags: ["wordpress", "pinterest", "seo", "all in one seo pack"]
-type: "post"
 ---
 
 The two main steps are to create a Pinterest for Businsess account, and then confirm your website.

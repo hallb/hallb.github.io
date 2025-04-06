@@ -2,7 +2,6 @@
 title: "Requirements: Dysfunction Non-function Junction"
 date: 2014-04-29T12:00:00+00:00
 tags: ["requirements", "non-functional requirements", "software development"]
-type: "post"
 ---
 
 Here's a post I wrote for [work](http://intelliware.com) about [non-functional requirements](http://i-proving.com/2014/04/29/non-functional-requirements-are-underappreciated/) (<abbr class=".initialism" title="non-functional requirements">NFRs</abbr>). It's a dry topic, but one that I'm quite interested in. Sadly.

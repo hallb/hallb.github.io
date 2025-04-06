@@ -1,0 +1,16 @@
+{{- $pages := where .Site.RegularPages "Type" "eq" "post" -}}
+{{- $debug := dict "totalPages" (len .Site.RegularPages) "filteredPages" (len $pages) -}}
+{{- $result := slice -}}
+
+{{- range $pages -}}
+    {{- $data := dict 
+        "title" .Title 
+        "date" .Date
+        "permalink" .Permalink
+        "summary" (.Summary | plainify)
+        "tags" .Params.tags
+    -}}
+    {{- $result = $result | append $data -}}
+{{- end -}}
+
+{{ jsonify (dict "debug" $debug "pages" $result) }} 

@@ -2,7 +2,6 @@
 title: "Setting Up Defensio Anti-spam in Wordpress"
 date: 2013-11-11T12:00:00+00:00
 tags: ["wordpress", "defensio", "anti-spam"]
-type: "post"
 ---
 
 After installing "All in One SEO" pack, getting Google Analytics set up, and registering my site with Google Webmaster Tools and Bing Webmaster Tools (and Pinterest), the next thing to do is install the "Defensio Anti-spam" plugin in Wordpress. This involves getting a free account with Defensio, which is where we'll start, and installing the plugin and then confirming the API key within the plugin.

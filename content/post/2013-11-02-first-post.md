@@ -1,8 +1,9 @@
 ---
 title: "First post"
 date: 2013-11-02T12:00:00+00:00
+type: post
+draft: false
 tags: ["wordpress", "all in one seo pack", "seo", "software and technology"]
-type: "post"
 ---
 
 Up until a few hours ago, this site was just a few bytes saying: "Powered by vi." I've decided to jump into WordPress.
@@ -31,4 +32,4 @@ As for WordPress itself, until recently I had a pretty low opinion of it. I've e
 
 Let the experiment begin.
 
-![lab flasks](/assets/flickr-4528869007-original-300x225.jpg) 
+![lab flasks](/img/flickr-4528869007-original-300x225.jpg) 

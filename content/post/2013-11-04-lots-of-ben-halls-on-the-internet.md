@@ -2,7 +2,6 @@
 title: "Lots of Ben Halls on the Internet"
 date: 2013-11-04T12:00:00+00:00
 tags: ["ben hall", "internet"]
-type: "post"
 ---
 
 It's been a long time since the Ben over at [benhall.com](benhall.com) had to forward some email to me here at benhall.ca. Before I retired my obvious email address @benhall.ca due to over-spam, I'd get a helpful email from him every few weeks.
@@ -29,6 +28,6 @@ To you Gentle Reader from Houston (you know who you are), I assume you were look
 
 Yet.
 
-![Surveillance camera on side of building.](/assets/flickr-2533699355-original-300x200.jpg)
+![Surveillance camera on side of building.](/img/flickr-2533699355-original-300x200.jpg)
 
 Who are you? 

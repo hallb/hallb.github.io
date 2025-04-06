@@ -2,7 +2,6 @@
 title: "Barque Smokehouse shows estimation is hard"
 date: 2013-11-24T12:00:00+00:00
 tags: ["estimation", "software development", "restaurants"]
-type: "post"
 ---
 
 I'm a software developer, so I'm used to giving estimates. I'm used to my estimates being wrong. It turns out that [Barque Smokehouse](http://barque.ca) has the same problem.
@@ -19,6 +18,6 @@ Toronto, ON
 M6R 2M3  
 P: (416) 532-7700
 
-![Dice](/assets/4319839458_f275907f7b-300x228.jpg)
+![Dice](/img/4319839458_f275907f7b-300x228.jpg)
 
 <small>Might as well roll the dice</small> 
