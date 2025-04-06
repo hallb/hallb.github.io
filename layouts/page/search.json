@@ -1,0 +1,19 @@
+{{- $pages := where .Site.RegularPages "Type" "eq" "post" -}}
+{{- $result := slice -}}
+
+{{- range $pages -}}
+    {{- $data := dict 
+        "title" .Title 
+        "date" (.Date.Format "2006-01-02T15:04:05Z07:00")
+        "permalink" .Permalink
+        "content" .Plain
+        "preview" .Summary
+        "matchCount" 0
+    -}}
+    {{- if .Params.image -}}
+        {{- $data = merge $data (dict "image" .Params.image) -}}
+    {{- end -}}
+    {{- $result = $result | append $data -}}
+{{- end -}}
+
+{{ jsonify $result }} 

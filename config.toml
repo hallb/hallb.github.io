@@ -8,6 +8,14 @@ theme = "stack"
 enableRobotsTXT = true
 enableEmoji = true
 
+# Output formats
+[outputs]
+home = ["HTML", "RSS", "JSON"]
+page = ["HTML", "JSON"]
+section = ["HTML", "RSS", "JSON"]
+taxonomy = ["HTML", "RSS", "JSON"]
+taxonomyTerm = ["HTML", "RSS", "JSON"]
+
 # Default language
 defaultContentLanguage = "en"
 
@@ -29,6 +37,12 @@ name = "About"
 url = "/about/"
 weight = 2
 
+[[menu.main]]
+identifier = "search"
+name = "Search"
+url = "/search/"
+weight = 3
+
 # Basic theme settings
 [params]
 mainSections = ["post"]
@@ -43,11 +57,12 @@ content = "Software engineer and technical director at Intelliware with expertis
 
 [params.widgets]
 homepage = [
-    {type = "search"},
+    {type = "search", params = {placeholder = "Search..."}},
     {type = "archives"},
     {type = "tag-cloud"}
 ]
 page = [
+    {type = "search", params = {placeholder = "Search..."}},
     {type = "toc"}
 ]
 
@@ -67,9 +82,6 @@ url = "https://twitter.com/BenHall"
 # anchor = "Smart"
 # quality = 75
 # resampleFilter = "Lanczos"
-
-# [outputs]
-# home = ["HTML", "RSS", "JSON"]
 
 # [params.footer]
 # since = 2013
