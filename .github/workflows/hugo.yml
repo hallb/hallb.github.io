@@ -1,5 +1,6 @@
 name: Build and Deploy Hugo site
 
+# Trigger on pushes to master branch
 on:
   push:
     branches: [ master ]
