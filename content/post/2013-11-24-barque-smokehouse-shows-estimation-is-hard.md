@@ -1,7 +1,8 @@
 ---
-title: "Barque Smokehouse shows estimation is hard"
-date: 2013-11-24T12:00:00+00:00
-tags: ["estimation", "software development", "restaurants"]
+title: "Barque Smokehouse Shows Estimation is Hard"
+date: 2013-11-24
+tags: ["restaurants", "estimation"]
+image: "/img/4319839458_f275907f7b-300x228.jpg"
 ---
 
 I'm a software developer, so I'm used to giving estimates. I'm used to my estimates being wrong. It turns out that [Barque Smokehouse](http://barque.ca) has the same problem.
