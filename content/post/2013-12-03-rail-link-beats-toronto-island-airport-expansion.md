@@ -2,6 +2,7 @@
 title: "Rail Link Beats Toronto Island Airport Expansion"
 date: 2013-12-03T12:00:00+00:00
 tags: ["toronto", "transit", "airports", "politics"]
+image: "/img/NoJetsTO_Infographic_Airport_Links_2013-10-20-1017x1024.jpg"
 ---
 
 I just signed the petition at [No Jets TO](http://www.nojetsto.ca/). I found the infographics a pretty good summary of the arguments against the airport expansion.

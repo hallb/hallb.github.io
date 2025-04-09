@@ -1,9 +1,10 @@
 ---
-title: "First post"
+title: "First Post"
 date: 2013-11-02T12:00:00+00:00
 type: post
 draft: false
-tags: ["wordpress", "all in one seo pack", "seo", "software and technology"]
+tags: ["wordpress", "all in one seo pack", "seo", "software and technology", "software-development"]
+image: "/img/flickr-4528869007-original-300x225.jpg"
 ---
 
 Up until a few hours ago, this site was just a few bytes saying: "Powered by vi." I've decided to jump into WordPress.

@@ -1,7 +1,8 @@
 ---
-title: "Five Cool Things about the BioLite CampStove"
-date: 2014-06-16T12:00:00+00:00
+title: "Five Cool Things About the BioLite CampStove"
+date: 2014-06-16
 tags: ["camping", "gear", "biolite", "campstove"]
+image: "/img/biolite-campstove-burns-wood-to-cook-dinner-charge-gadgets-1-300x300.jpg"
 ---
 
 Just got one of these for Fathers' Day: [BioLite CampStove](http://www.biolitestove.com/products/campstove/).
