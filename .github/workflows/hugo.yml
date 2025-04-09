@@ -20,8 +20,15 @@ jobs:
           hugo-version: 'latest'
           extended: true
 
+      - name: Debug - List directory contents
+        run: |
+          ls -la
+          ls -la themes/stack
+
       - name: Build
-        run: hugo --minify
+        run: |
+          hugo --minify
+          ls -la public
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
