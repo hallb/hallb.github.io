@@ -11,13 +11,9 @@ enableEmoji = true
 # Output formats
 [outputs]
 home = ["HTML", "RSS", "JSON"]
-page = ["HTML", "JSON"]
-section = ["HTML", "RSS", "JSON"]
-taxonomy = ["HTML", "RSS", "JSON"]
-taxonomyTerm = ["HTML", "RSS", "JSON"]
-
-# Default language
-defaultContentLanguage = "en"
+page = ["HTML"]
+section = ["HTML", "RSS"]
+taxonomy = ["HTML", "RSS"]
 
 # Configure taxonomies
 [taxonomies]
