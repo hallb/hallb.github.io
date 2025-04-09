@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Defensio on BenHall.ca</title><link>https://benhall.ca/tags/defensio/</link><description>Recent content in Defensio on BenHall.ca</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 11 Nov 2013 12:00:00 +0000</lastBuildDate><atom:link href="https://benhall.ca/tags/defensio/index.xml" rel="self" type="application/rss+xml"/><item><title>Setting Up Defensio Anti-spam in Wordpress</title><link>https://benhall.ca/post/2013-11-11-setting-up-defensio-anti-spam-in-wordpress/</link><pubDate>Mon, 11 Nov 2013 12:00:00 +0000</pubDate><guid>https://benhall.ca/post/2013-11-11-setting-up-defensio-anti-spam-in-wordpress/</guid><description>&lt;p>After installing &amp;ldquo;All in One SEO&amp;rdquo; pack, getting Google Analytics set up, and registering my site with Google Webmaster Tools and Bing Webmaster Tools (and Pinterest), the next thing to do is install the &amp;ldquo;Defensio Anti-spam&amp;rdquo; plugin in Wordpress. This involves getting a free account with Defensio, which is where we&amp;rsquo;ll start, and installing the plugin and then confirming the API key within the plugin.&lt;/p>
+&lt;h2 id="defensio-account">Defensio Account
+&lt;/h2>&lt;ul>
+&lt;li>Go to &lt;a class="link" href="http://www.defensio.com" target="_blank" rel="noopener"
+>Defensio Anti-spam&lt;/a> and set up a new account.&lt;/li>
+&lt;li>Click on &amp;ldquo;My API Keys&amp;rdquo; and select &amp;ldquo;Protect another web property&amp;rdquo;.&lt;/li>
+&lt;li>Choose &amp;ldquo;Protect a Blog or Website&amp;rdquo;.&lt;/li>
+&lt;li>Enter your site&amp;rsquo;s URL and click Submit.&lt;/li>
+&lt;li>Copy your API key to the clipboard.&lt;/li>
+&lt;/ul>
+&lt;h2 id="install-the-plugin">Install the Plugin
+&lt;/h2>&lt;ul>
+&lt;li>Go back to your site&amp;rsquo;s WordPress Dashboard and select Plugins &amp;gt; Add New.&lt;/li>
+&lt;li>Search for &amp;ldquo;Defensio&amp;rdquo;.&lt;/li>
+&lt;li>Select &amp;ldquo;Defensio Anti-Spam&amp;rdquo; and click on &amp;ldquo;Install Now&amp;rdquo; and confirm in the dialog.&lt;/li>
+&lt;li>Click on Activate Plugin.&lt;/li>
+&lt;li>You&amp;rsquo;ll see a message that says &amp;ldquo;&lt;strong>Defensio is not active&lt;/strong> because you have not entered your Defensio API key. &lt;a class="link" href="http://defensio.com/signup" target="_blank" rel="noopener"
+>Get one right here!&lt;/a>&amp;rdquo; You&amp;rsquo;ve already got an API key, so go to the left hand menu. Select Plugins &amp;gt; Defensio Configuration&lt;/li>
+&lt;li>Click &amp;ldquo;Save Settings&amp;rdquo;, leaving all the other options alone.&lt;/li>
+&lt;li>You should get a message saying that your API key is valid.&lt;/li>
+&lt;/ul>
+&lt;p>Now that the plugin is installed, you&amp;rsquo;ll see an extra menu item under Comments for &amp;ldquo;Defensio Spam&amp;rdquo; where you can confirm or release comments that are identified as spam.&lt;/p></description></item></channel></rss>

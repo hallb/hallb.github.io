@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Seo on BenHall.ca</title><link>https://benhall.ca/tags/seo/</link><description>Recent content in Seo on BenHall.ca</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Mon, 11 Nov 2013 12:00:00 +0000</lastBuildDate><atom:link href="https://benhall.ca/tags/seo/index.xml" rel="self" type="application/rss+xml"/><item><title>Pinterest for Business and All in One SEO Pack</title><link>https://benhall.ca/post/2013-11-11-pinterest-for-business-and-all-in-one-seo-pack/</link><pubDate>Mon, 11 Nov 2013 12:00:00 +0000</pubDate><guid>https://benhall.ca/post/2013-11-11-pinterest-for-business-and-all-in-one-seo-pack/</guid><description>&lt;p>The two main steps are to create a Pinterest for Businsess account, and then confirm your website.&lt;/p>
+&lt;h2 id="get-set-up-on-pinterest-for-business">Get Set up on Pinterest for Business
+&lt;/h2>&lt;ul>
+&lt;li>Go to &lt;a class="link" href="http://business.pinterest.com/" target="_blank" rel="noopener"
+>Pinterest for Business&lt;/a> and click on &amp;ldquo;Join as a Business&amp;rdquo;&lt;/li>
+&lt;li>Fill out the &amp;ldquo;Create a Business Account&amp;rdquo; form:
+&lt;ul>
+&lt;li>I selected &amp;ldquo;Other&amp;rdquo; as the business type;&lt;/li>
+&lt;li>You need to choose an email address that doesn&amp;rsquo;t already have an account with Pinterest. I ended up using my gmail account so I used the &amp;ldquo;+&amp;rdquo; to &amp;ldquo;generate&amp;rdquo; a new email address. Meaning, if my email address at gmail.com was &lt;code>foo@gmail.com&lt;/code>, I used &lt;code>foo+sailinghall@gmail.com&lt;/code>. Pinterest recognized it as a separate email address, but gmail directs emails to &lt;code>foo+sailinghall@gmail.com&lt;/code> to the regular &lt;code>foo@gmail.com&lt;/code> address.&lt;/li>
+&lt;li>I filled in username, business name, and website all as expected, and left the rest of the fields alone.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Go to your email account and confirm your email address following the directions in the email.&lt;/li>
+&lt;/ul>
+&lt;h2 id="confirm-your-website">Confirm Your Website
+&lt;/h2>&lt;ul>
+&lt;li>Back at Pinterest, click on your account name in the upper right, and select Settings from the menu.&lt;/li>
+&lt;li>Click on Edit Profile.&lt;/li>
+&lt;li>Click on Verify Website (the name of the website should already have been filled in from your &amp;ldquo;Create a Business Account&amp;rdquo; page earlier.&lt;/li>
+&lt;li>Click on Verify with a meta tag.&lt;/li>
+&lt;li>Copy the value in the content attribute to your clipboard.&lt;/li>
+&lt;li>In other tab, log in to your WordPress admin account. From the dashboard menu on the left select &amp;ldquo;All in One SEO Pack&amp;rdquo; and &amp;ldquo;General Settings&amp;rdquo;.&lt;/li>
+&lt;li>Scroll down to &amp;ldquo;Pinterest Site Verification&amp;rdquo; under &amp;ldquo;Webmaster Verification&amp;rdquo; and paste the code that you copied from Pinterest.&lt;/li>
+&lt;li>Scroll down to the bottom and click &amp;ldquo;Update Options&amp;rdquo;&lt;/li>
+&lt;li>After the WordPress settings are saved, go back to your Pinterest tab, and click &amp;ldquo;Complete Verification&amp;rdquo;. Interestingly, there&amp;rsquo;s no feedback if this is successful, but if you click &amp;ldquo;Complete Verification&amp;rdquo; a second time, it will tell you that the site has already been verified. Click on the X to dismiss the Verify Your Website dialog.&lt;/li>
+&lt;li>While saving my &amp;ldquo;Profile&amp;rdquo;, I had to fix the website name to include &amp;ldquo;http://&amp;rdquo; in front of the website name. The &amp;ldquo;Create a Business Account&amp;rsquo; page had stripped the http:// that I originally added.&lt;/li>
+&lt;/ul>
+&lt;p>Back on the Pinterest Account Settings page, there are a lot of options to associate your Pinterest account with many other social networks. I suppose this makes sense, but I haven&amp;rsquo;t done it myself. It reminds me to think about my social networking strategy though.&lt;/p></description></item><item><title>Setting up All In One SEO Pack</title><link>https://benhall.ca/post/2013-11-08-setting-up-all-in-one-seo-pack/</link><pubDate>Fri, 08 Nov 2013 12:00:00 +0000</pubDate><guid>https://benhall.ca/post/2013-11-08-setting-up-all-in-one-seo-pack/</guid><description>&lt;p>WordPress has a freely available plugin called &amp;ldquo;All in One SEO Pack&amp;rdquo;. This plugin helps with SEO good practices like:&lt;/p>
+&lt;ul>
+&lt;li>hooking your site up to Google Webmaster Tools, Bing Webmaster Tools, and registering with Pinterest;&lt;/li>
+&lt;li>setting up Google Analytics;&lt;/li>
+&lt;li>creating a sitemap.xml;&lt;/li>
+&lt;li>referring to your Google+ account.&lt;/li>
+&lt;/ul>
+&lt;p>Here are the steps I&amp;rsquo;ve used to set up &amp;ldquo;All in One SEO Pack&amp;rdquo; v2.0.4.1 on my latest site running on a self-hosting install of WordPress 3.7.1. Bear in mind that the Google and Bing webmaster instructions were good as of the date that I wrote this.&lt;/p>
+&lt;ul>
+&lt;li>Log in as an administrator and select Plugins &amp;gt; Add New which takes you to the Install Plugins screen.&lt;/li>
+&lt;li>Search for &amp;ldquo;All in One SEO Pack&amp;rdquo; which should be the first result.&lt;/li>
+&lt;li>Click Install Now and then OK.&lt;/li>
+&lt;li>On the screen labelled &amp;ldquo;Installing Plugin: All in One SEO Pack 2.0.4.1&amp;rdquo;, click &amp;ldquo;Activate Plugin&amp;rdquo;.&lt;/li>
+&lt;li>In the top of the left-side menu towards, you should have a new entry called &amp;ldquo;All in One SEO&amp;rdquo;. Click on it.&lt;/li>
+&lt;li>You can dismiss the helpful &amp;ldquo;Welcome&amp;rdquo; and &amp;ldquo;Review Your Settings&amp;rdquo; pop-ups by clicking &amp;ldquo;Dismiss&amp;rdquo; in each one&lt;/li>
+&lt;/ul>
+&lt;p>We&amp;rsquo;ll start off with the General Settings:&lt;/p>
+&lt;ul>
+&lt;li>In &amp;ldquo;Home Page Settings&amp;rdquo;, set your Home Title, Home Description, and Home Keywords. These will controls the settings only your home page. Choosing well here is important, but is beyond my to give good advice on. Don&amp;rsquo;t worry too much&amp;ndash;these can be updated later.&lt;/li>
+&lt;li>In &amp;ldquo;Keyword Settings&amp;rdquo;:
+&lt;ul>
+&lt;li>Leave &amp;ldquo;Use Keywords&amp;rdquo; enabled.&lt;/li>
+&lt;li>Turn on &amp;ldquo;Use Categories for META Keywords&amp;rdquo;.&lt;/li>
+&lt;li>Leave &amp;ldquo;Use Tags for META Keywords&amp;rdquo; enabled.&lt;/li>
+&lt;li>Leave &amp;ldquo;Dynamically generate Keywords for Posts pages&amp;rdquo; enabled.&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>Leave all the &amp;ldquo;Title Settings&amp;rdquo; as-is.&lt;/li>
+&lt;li>Leave &amp;ldquo;Custom Site Post Settings&amp;rdquo; as-is.&lt;/li>
+&lt;li>Leave &amp;ldquo;Display Settings&amp;rdquo; as-is.&lt;/li>
+&lt;li>Leave the &amp;ldquo;Noindex Settings&amp;rdquo; and &amp;ldquo;Advanced Settings&amp;rdquo; (at the bottom of the page) as they are.&lt;/li>
+&lt;/ul>
+&lt;p>At this point, use the &amp;ldquo;Update Options&amp;rdquo; button at the bottom and then scroll back down to the settings for &amp;ldquo;Webmaster Verification.&amp;rdquo;&lt;/p>
+&lt;p>&lt;strong>Google Webmaster Tools&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>In a new browser tab, go to &lt;a class="link" href="https://www.google.com/webmasters/tools" target="_blank" rel="noopener"
+>Google Webmaster Tools&lt;/a>, using your Google Account.&lt;/li>
+&lt;/ul></description></item><item><title>First post</title><link>https://benhall.ca/post/2013-11-02-first-post/</link><pubDate>Sat, 02 Nov 2013 12:00:00 +0000</pubDate><guid>https://benhall.ca/post/2013-11-02-first-post/</guid><description>&lt;p>Up until a few hours ago, this site was just a few bytes saying: &amp;ldquo;Powered by vi.&amp;rdquo; I&amp;rsquo;ve decided to jump into WordPress.&lt;/p>
+&lt;p>Here&amp;rsquo;s where I&amp;rsquo;m going to dump my thoughts about:&lt;/p>
+&lt;ul>
+&lt;li>software&lt;/li>
+&lt;li>karate&lt;/li>
+&lt;li>kids&lt;/li>
+&lt;li>sailing&lt;/li>
+&lt;li>cooking&lt;/li>
+&lt;/ul>
+&lt;p>I&amp;rsquo;ve recently become interested in how SEO works, so I&amp;rsquo;m also going to try to SEO the heck out of this site, at least from a WordPress tooling perspective. I don&amp;rsquo;t expect this site to rank particularly highly on any particular keyword since it&amp;rsquo;s going to be a general mishmash. But I&amp;rsquo;ve already learned how to hook up Google Analytics and Google Webmaster Tools. The WordPress plugin I&amp;rsquo;m using is the &amp;ldquo;All in One SEO Pack&amp;rdquo;, which in addition to guiding me through the Google process, also helped me end up with:&lt;/p>
+&lt;ul>
+&lt;li>A sitemap.xml&lt;/li>
+&lt;li>Verifying the site with Bing and Pinterest as well as Google.&lt;/li>
+&lt;li>Including a reference to my Google+ account (we&amp;rsquo;ll see if that shows up properly in the search results later).&lt;/li>
+&lt;/ul>
+&lt;p>The other WordPress Plugins I&amp;rsquo;ve installed so far are:&lt;/p>
+&lt;ul>
+&lt;li>Defensio Anti-spam. We&amp;rsquo;ll see how much garbage ends up in the comments. I&amp;rsquo;ll leave them turned on for now.&lt;/li>
+&lt;li>Google Analyticator, which may be unnecessary in conjunction with the &amp;ldquo;All in One SEO Pack&amp;rdquo;, but provides a view of Google Analytics embedded in the WordPress dashboard.&lt;/li>
+&lt;li>WP Super Cache to speed up the site. I noticed that when I changed the theme, I had to invalidate (delete) the cache.&lt;/li>
+&lt;/ul>
+&lt;p>As for WordPress itself, until recently I had a pretty low opinion of it. I&amp;rsquo;ve ended up mis-using it as a wiki at work, and it really doesn&amp;rsquo;t fit the bill. I&amp;rsquo;ve found it sluggish, and a pain to create hierarchical content. However, the availability of plugins is amazing and the editing experience seems good so far, for a single article-style blog entry.&lt;/p>
+&lt;p>Let the experiment begin.&lt;/p>
+&lt;p>&lt;img src="https://benhall.ca/img/flickr-4528869007-original-300x225.jpg"
+loading="lazy"
+alt="lab flasks"
+>&lt;/p></description></item></channel></rss>
