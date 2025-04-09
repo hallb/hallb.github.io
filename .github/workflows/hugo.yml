@@ -2,9 +2,7 @@ name: Build and Deploy Hugo site
 
 on:
   push:
-    branches: [ try-hugo ]
-  pull_request:
-    branches: [ try-hugo ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -26,7 +24,7 @@ jobs:
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/try-hugo'
+        if: github.ref == 'refs/heads/master'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
