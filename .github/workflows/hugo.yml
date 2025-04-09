@@ -27,7 +27,7 @@ jobs:
 
       - name: Build
         run: |
-          hugo --minify
+          hugo --verbose --minify
           ls -la public
 
       - name: Deploy
