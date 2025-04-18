@@ -14,7 +14,6 @@ home = ["HTML", "RSS", "JSON"]
 page = ["HTML", "JSON"]
 section = ["HTML", "RSS", "JSON"]
 taxonomy = ["HTML", "RSS", "JSON"]
-taxonomyTerm = ["HTML", "RSS", "JSON"]
 
 # Default language
 defaultContentLanguage = "en"
@@ -54,6 +53,11 @@ favicon = "/favicon.ico"
 [params.sidebar]
 subtitle = "Software, karate, kids, sailing, and cooking"
 
+[params.sidebar.avatar]
+enabled = true
+local = true
+src = "img/avatar.png"
+
 [params.sidebar.bio]
 enabled = true
 content = "Software engineer and technical director at Intelliware with expertise in Java and agile development methods."
@@ -92,11 +96,6 @@ url = "https://twitter.com/BenHall"
 # [params.dateFormat]
 # published = "Jan 02, 2006"
 # lastUpdated = "Jan 02, 2006 15:04 MST"
-
-# [params.sidebar.avatar]
-# enabled = true
-# local = true
-# src = "img/avatar.png"
 
 # [params.article]
 # math = false
