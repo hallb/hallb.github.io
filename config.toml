@@ -34,7 +34,7 @@ params = { icon = "home" }
 [[menu.main]]
 identifier = "about"
 name = "About"
-url = "/about/"
+url = "/page/about/"
 weight = 2
 params = { icon = "user" }
 
@@ -56,11 +56,11 @@ subtitle = "Software, karate, kids, sailing, and cooking"
 [params.sidebar.avatar]
 enabled = true
 local = true
-src = "img/avatar.png"
+src = "/img/avatar.png"
 
 [params.sidebar.bio]
 enabled = true
-content = "Software engineer and technical director at Intelliware with expertise in Java and agile development methods."
+content = "Software engineer and Lead Technical Director at Electric Mind (formerly Intelliware) with expertise in Java and agile development methods."
 
 [params.widgets]
 homepage = [
