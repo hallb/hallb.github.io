@@ -3,7 +3,6 @@ title: "Non-functional Requirements are Underappreciated"
 date: 2014-04-29
 tags: ["requirements", "non-functional requirements", "software development"]
 image: "/img/i-proving.png"
-draft: true
 ---
 
 
