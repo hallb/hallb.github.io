@@ -1,0 +1,41 @@
+---
+# The Fernhill nightly run on 14 August, from the runner's log.
+# Placeholder colours: #010101 ink, #FEFEFD card, #020202 accent, #030303 muted.
+config:
+  theme: base
+  themeVariables:
+    fontFamily: "Atkinson Hyperlegible"
+    primaryTextColor: "#010101"
+    textColor: "#010101"
+    titleColor: "#010101"
+    lineColor: "#030303"
+    gridColor: "#030303"
+    sectionBkgColor: "#FEFEFD"
+    altSectionBkgColor: "#FEFEFD"
+    sectionBkgColor2: "#FEFEFD"
+    taskBkgColor: "#FEFEFD"
+    taskBorderColor: "#010101"
+    taskTextColor: "#010101"
+    taskTextOutsideColor: "#010101"
+    taskTextDarkColor: "#010101"
+    doneTaskBkgColor: "#FEFEFD"
+    doneTaskBorderColor: "#010101"
+    critBkgColor: "#FEFEFD"
+    critBorderColor: "#020202"
+    todayLineColor: "#020202"
+---
+gantt
+    dateFormat HH:mm
+    axisFormat %H:%M
+    todayMarker off
+
+    section Staging
+    stage_harvest :done, sh, 02:30, 6m
+    stage_orders  :done, so, 02:30, 3m
+
+    section Boxes
+    box_contents  :done, bc, after sh so, 17m
+    waste_report  :done, wr, after bc, 2m
+
+    section Routes
+    route_plan    :crit, rp, after so, 3m

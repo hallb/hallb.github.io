@@ -1,0 +1,43 @@
+@startuml
+' The order check that runs on every pull request touching jobs.yml or sql/.
+' Placeholder colours: #010101 ink, #FEFEFD card, #020202 accent, #030303 muted.
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundCorner 3
+skinparam defaultFontName "Atkinson Hyperlegible"
+skinparam defaultFontColor #010101
+skinparam ArrowColor #010101
+skinparam ArrowFontColor #030303
+skinparam ActivityBorderColor #010101
+skinparam ActivityBackgroundColor #FEFEFD
+skinparam ActivityDiamondBorderColor #010101
+skinparam ActivityDiamondBackgroundColor #FEFEFD
+skinparam ActivityStartColor #010101
+skinparam ActivityEndColor #010101
+skinparam NoteBorderColor #030303
+skinparam NoteBackgroundColor #FEFEFD
+
+start
+:Read jobs.yml;
+:Parse each job's SQL
+into a target and sources;
+repeat
+  :Take the next edge
+  source -> job;
+  if (Does the job run after
+  the source's writer?) then (yes)
+  else (no)
+    -[#020202]->
+    :Record an ordering problem;
+  endif
+repeat while (More edges?) is (yes)
+->no;
+if (Any problems?) then (yes)
+  :Fail the pull request;
+  note right: Lists each job and\nthe table it reads early
+  stop
+else (no)
+  :Render lineage.svg;
+  stop
+endif
+@enduml
