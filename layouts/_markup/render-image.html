@@ -33,9 +33,33 @@
     {{- /* Diagram-A colour swap. The sources render with placeholders that
            nothing else would pick, so a failed swap looks slightly wrong
            rather than invisible. */ -}}
-    {{- /* Case-insensitive on purpose: Graphviz writes its hex lowercase,
-           PlantUML writes it uppercase, and a missed swap leaves a literal
-           colour that survives into the dark theme. */ -}}
+    {{- /* Colours the renderers hard-code, which no source file can reach.
+           These run FIRST: the placeholder swaps below emit #FFFFFF inside
+           their var() fallback, and rewriting that afterwards produced
+           var(--dg-card, var(--dg-card, #FFFFFF)). Harmless, but wrong.
+
+           PlantUML's stop symbol is a white outer ellipse with a grey inner
+           stroke, hard-coded past every skinparam. d3 writes fill="#000"
+           inline on the Mermaid gantt's axis text. Mermaid's today marker
+           uses the named colour navy. Anything that genuinely wants white or
+           black gets card or ink, which is the right answer on this design.
+           The six-digit black goes first, so #000's word boundary cannot
+           clip the front of #000000. */ -}}
+    {{- $svg = $svg | replaceRE `(?i)#FFFFFF\b` "var(--dg-card, #FFFFFF)" -}}
+    {{- $svg = $svg | replaceRE `(?i)#808080\b` "var(--dg-muted, #474D54)" -}}
+    {{- $svg = $svg | replaceRE `(?i)#000000\b` "var(--dg-ink, #1A1A1A)" -}}
+    {{- $svg = $svg | replaceRE `(?i)#000\b` "var(--dg-ink, #1A1A1A)" -}}
+    {{- $svg = $svg | replaceRE `(?i)(stroke|fill)\s*:\s*navy\b` "${1}:var(--dg-accent, #1B4FA0)" -}}
+    {{- /* Mermaid paints its own white backdrop on the <svg> element, as a
+           named colour rather than a hex, so none of the swaps above see it.
+           On the dark theme it shows through as a white slab inset by the
+           frame's padding; on the light theme it is white on white and
+           invisible, which is why it survived the first pass. */ -}}
+    {{- $svg = $svg | replaceRE `(?i)background-color\s*:\s*white\b` "background-color:var(--dg-card, #FFFFFF)" -}}
+
+    {{- /* The four placeholders the diagram sources render with.
+           Case-insensitive: Graphviz writes its hex lowercase and PlantUML
+           writes it uppercase. */ -}}
     {{- $svg = $svg | replaceRE `(?i)#010101` "var(--dg-ink, #1A1A1A)" -}}
     {{- $svg = $svg | replaceRE `(?i)#FEFEFD` "var(--dg-card, #FFFFFF)" -}}
     {{- $svg = $svg | replaceRE `(?i)#020202` "var(--dg-accent, #1B4FA0)" -}}

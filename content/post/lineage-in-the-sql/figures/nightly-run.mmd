@@ -23,6 +23,21 @@ config:
     critBkgColor: "#FEFEFD"
     critBorderColor: "#020202"
     todayLineColor: "#020202"
+    # Mermaid derives a colour for every variable left unset, and those
+    # derived values are literals the build's placeholder swap cannot see.
+    # The gantt does not use most of these, but it emits them anyway.
+    background: "#FEFEFD"
+    primaryColor: "#FEFEFD"
+    primaryBorderColor: "#010101"
+    secondaryColor: "#FEFEFD"
+    tertiaryColor: "#FEFEFD"
+    excludeBkgColor: "#FEFEFD"
+    activeTaskBkgColor: "#FEFEFD"
+    activeTaskBorderColor: "#010101"
+    taskTextLightColor: "#010101"
+    taskTextClickableColor: "#010101"
+    errorBkgColor: "#FEFEFD"
+    errorTextColor: "#010101"
 ---
 gantt
     dateFormat HH:mm

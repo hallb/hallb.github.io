@@ -28,4 +28,11 @@
        class is added here for the same reason as the callout list above. */ -}}
 {{- $html = $html | replaceRE `<dl>` `<dl class="defs">` -}}
 
+{{- /* Wide tables. site.css breaks an element out of the measure with
+       `.page > .full`, which only matches a direct child of main.page. The
+       table render hook can only emit markup where the table sits, which is
+       inside .prose, so the block is lifted out here: close .prose, emit the
+       table, reopen .prose. That is exactly how docs.html does it by hand. */ -}}
+{{- $html = $html | replaceRE `(?s)(<div class="table-wrap full">.*?</div>\s*<div class="scroll-hint scroll-hint--bare full"[^>]*>.*?</div>)` `</div>$1<div class="prose">` -}}
+
 {{- $html | safeHTML -}}
