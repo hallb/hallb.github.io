@@ -2,9 +2,8 @@
 {{- $file := .Attributes.file | default "" -}}
 {{- $code := .Inner -}}
 
-{{- /* Syntax-D: languages no highlighter has a grammar for. Decided
-       2026-09-15; see docs/02-solution/syntax-highlighting.md. */ -}}
-{{- $plain := in (slice "dot" "graphviz" "gv" "plantuml" "puml" "mermaid" "mmd") $lang -}}
+{{- /* A language Chroma has no lexer for comes back unhighlighted on its own,
+       and that needs no announcing: same chrome, same copy button. */ -}}
 {{- $console := eq $lang "console" -}}
 
 {{- if $console -}}
@@ -17,13 +16,6 @@
 {{ end -}}
 {{- end -}}
 {{- end -}}</code></pre>
-  <div class="scroll-hint" aria-hidden="true">scroll →</div>
-</div>
-
-{{- else if $plain -}}
-<div class="code code--plain">
-  <div class="code__head"><span>{{ $lang }}</span>{{ with $file }}<span>{{ . }}</span>{{ end }}<span>not highlighted</span></div>
-<pre><code>{{ $code }}</code></pre>
   <div class="scroll-hint" aria-hidden="true">scroll →</div>
 </div>
 

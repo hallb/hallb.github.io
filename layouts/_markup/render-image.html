@@ -1,5 +1,14 @@
-{{- /* Figures. The diagram pipeline (ISS-47) replaces the <img> with an
-       inlined, colour-swapped SVG; until then the file is linked as-is. */ -}}
+{{- /* Figures.
+
+     The markdown links the rendered file, as any markdown viewer expects:
+         ![alt](figures/lineage.svg "Fig. 1 — caption")
+     For the site, an SVG that lives in the page bundle is read and inlined
+     instead of being loaded through <img>, because an <img>-loaded SVG is an
+     isolated document that the page's CSS variables cannot reach, and
+     Diagram-A needs the placeholder colours swapped for var(--dg-*).
+
+     Anything that is not a bundled SVG falls back to a plain <img>. */ -}}
+
 {{- $caption := .Title -}}
 {{- $num := "" -}}
 {{- $rest := $caption -}}
@@ -7,10 +16,37 @@
   {{- $num = index (findRE `^Fig\.\s*\d+` $caption) 0 -}}
   {{- $rest = $caption | replaceRE `^Fig\.\s*\d+\s+—\s+` "" -}}
 {{- end -}}
+
+{{- $res := "" -}}
+{{- with .Page -}}
+  {{- with .Resources.GetMatch $.Destination -}}{{- $res = . -}}{{- end -}}
+{{- end -}}
+{{- $inline := and $res (strings.HasSuffix (lower .Destination) ".svg") -}}
+
 <figure class="diagram">
-  <div class="diagram__frame"><img src="{{ .Destination | relURL }}" alt="{{ .Text }}"></div>
+  <div class="diagram__frame">
+  {{- if $inline -}}
+    {{- $svg := $res.Content | string -}}
+    {{- /* Strip anything before the root element: an inlined SVG is a
+           fragment, not a document. */ -}}
+    {{- $svg = $svg | replaceRE `(?s)^.*?<svg` "<svg" -}}
+    {{- /* Diagram-A colour swap. The sources render with placeholders that
+           nothing else would pick, so a failed swap looks slightly wrong
+           rather than invisible. */ -}}
+    {{- /* Case-insensitive on purpose: Graphviz writes its hex lowercase,
+           PlantUML writes it uppercase, and a missed swap leaves a literal
+           colour that survives into the dark theme. */ -}}
+    {{- $svg = $svg | replaceRE `(?i)#010101` "var(--dg-ink, #1A1A1A)" -}}
+    {{- $svg = $svg | replaceRE `(?i)#FEFEFD` "var(--dg-card, #FFFFFF)" -}}
+    {{- $svg = $svg | replaceRE `(?i)#020202` "var(--dg-accent, #1B4FA0)" -}}
+    {{- $svg = $svg | replaceRE `(?i)#030303` "var(--dg-muted, #474D54)" -}}
+    {{- $svg | safeHTML -}}
+  {{- else -}}
+    <img src="{{ .Destination | relURL }}" alt="{{ .Text }}">
+  {{- end -}}
+  </div>
   {{- with $caption }}
   <figcaption>{{ with $num }}<span class="fig-num">{{ . }}</span> — {{ end }}{{ $rest }}</figcaption>
   {{- end }}
-  <div class="diagram__hint"><a href="{{ .Destination | relURL }}">tap to open full size</a><span aria-hidden="true">scroll →</span></div>
+  <div class="diagram__hint"><a href="{{ with $res }}{{ .RelPermalink }}{{ else }}{{ $.Destination | relURL }}{{ end }}">tap to open full size</a><span aria-hidden="true">scroll →</span></div>
 </figure>
