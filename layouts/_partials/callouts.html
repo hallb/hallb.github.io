@@ -1,0 +1,31 @@
+{{- /*
+  Turn an ordered list that directly follows a code block into Syntax-B's
+  callout list: ol.callouts, each item carrying a .pill with its number.
+
+  Hugo has no render hook for "the list after this block", and a codeblock
+  hook cannot see its sibling, so this runs over the rendered page instead.
+  Called from page.html as: {{ partial "callouts.html" .Content }}
+*/ -}}
+{{- $html := . | string -}}
+
+{{- /* Mark the lists that sit immediately after a code block. */ -}}
+{{- $html = $html | replaceRE `(?s)(</div>\s*)<ol>` `${1}<ol class="callouts">` -}}
+
+{{- /* Then number them, one .pill per item. */ -}}
+{{- range $list := findRE `(?s)<ol class="callouts">.*?</ol>` $html -}}
+  {{- $items := findRE `(?s)<li>.*?</li>` $list -}}
+  {{- $rebuilt := `<ol class="callouts">` -}}
+  {{- range $i, $item := $items -}}
+    {{- $inner := $item | replaceRE `(?s)^<li>(.*)</li>$` `$1` -}}
+    {{- $rebuilt = printf `%s<li><span class="pill">%d</span><span>%s</span></li>` $rebuilt (add $i 1) $inner -}}
+  {{- end -}}
+  {{- $rebuilt = printf `%s</ol>` $rebuilt -}}
+  {{- $html = replace $html $list $rebuilt -}}
+{{- end -}}
+
+{{- /* Definition lists. Goldmark emits a bare <dl>; the design wants
+       dl.defs, and Hugo has no render hook for definition lists, so the
+       class is added here for the same reason as the callout list above. */ -}}
+{{- $html = $html | replaceRE `<dl>` `<dl class="defs">` -}}
+
+{{- $html | safeHTML -}}

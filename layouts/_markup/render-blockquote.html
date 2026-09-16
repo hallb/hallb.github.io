@@ -1,0 +1,10 @@
+{{- if eq .Type "alert" -}}
+  {{- $type := .AlertType -}}
+  {{- $label := dict "note" "Note" "tip" "Tip" "important" "Important" "caution" "Caution" "warning" "Warning" -}}
+<div class="admonition admonition--{{ $type }}" role="note">
+  <div class="admonition__label">{{ index $label $type | default (title $type) }}</div>
+  {{ .Text }}
+</div>
+{{- else -}}
+<blockquote>{{ .Text }}</blockquote>
+{{- end -}}

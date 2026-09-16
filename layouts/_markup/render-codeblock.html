@@ -1,0 +1,46 @@
+{{- $lang := .Type | default "" -}}
+{{- $file := .Attributes.file | default "" -}}
+{{- $code := .Inner -}}
+
+{{- /* Syntax-D: languages no highlighter has a grammar for. Decided
+       2026-09-15; see docs/02-solution/syntax-highlighting.md. */ -}}
+{{- $plain := in (slice "dot" "graphviz" "gv" "plantuml" "puml" "mermaid" "mmd") $lang -}}
+{{- $console := eq $lang "console" -}}
+
+{{- if $console -}}
+<div class="code console">
+  <div class="code__head"><span>console</span>{{ with $file }}<span>{{ . }}</span>{{ end }}</div>
+<pre><code>{{- range $i, $line := split $code "\n" -}}
+{{- if and (eq $i (sub (len (split $code "\n")) 1)) (eq $line "") -}}{{- else -}}
+{{- if hasPrefix $line "$" }}<span class="in">{{ $line }}</span>
+{{ else }}<span class="out">{{ $line }}</span>
+{{ end -}}
+{{- end -}}
+{{- end -}}</code></pre>
+  <div class="scroll-hint" aria-hidden="true">scroll →</div>
+</div>
+
+{{- else if $plain -}}
+<div class="code code--plain">
+  <div class="code__head"><span>{{ $lang }}</span>{{ with $file }}<span>{{ . }}</span>{{ end }}<span>not highlighted</span></div>
+<pre><code>{{ $code }}</code></pre>
+  <div class="scroll-hint" aria-hidden="true">scroll →</div>
+</div>
+
+{{- else -}}
+  {{- $html := "" -}}
+  {{- if $lang -}}
+    {{- $html = highlight $code $lang "" | string -}}
+    {{- /* Chroma wraps its own div; the design's wrapper replaces it. */ -}}
+    {{- $html = $html | replaceRE `^<div class="highlight">` "" | replaceRE `</div>\s*$` "" -}}
+  {{- else -}}
+    {{- $html = printf "<pre><code>%s</code></pre>" (htmlEscape $code) -}}
+  {{- end -}}
+  {{- /* Code callouts: "# (1)" and "-- (1)" become numbered pills. */ -}}
+  {{- $html = $html | replaceRE `(#|--) \((\d+)\)` `$1 <span class="pill">$2</span>` -}}
+<div class="code">
+  <div class="code__head"><span>{{ $lang | default "text" }}</span>{{ with $file }}<span>{{ . }}</span>{{ end }}</div>
+{{ $html | safeHTML }}
+  <div class="scroll-hint" aria-hidden="true">scroll →</div>
+</div>
+{{- end -}}

@@ -1,0 +1,13 @@
+{{ define "main" }}
+<main id="main" class="page page--archive">
+<h1 class="title">{{ .Title }}</h1>
+<ul class="post-list">
+  {{- range .Pages }}
+  <li class="post-item">
+    <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+    <p class="byline"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>{{ with .Params.cluster }}<span aria-hidden="true"> · </span>{{ . }}{{ end }}</p>
+  </li>
+  {{- end }}
+</ul>
+</main>
+{{ end }}

@@ -2,18 +2,33 @@
 baseURL = "https://benhall.ca/"
 languageCode = "en-us"
 title = "BenHall.ca"
-theme = "stack"
+
+# No theme. ISS-46 builds the design-system reference from layouts/ directly;
+# the Stack theme and its submodule stay in the history but are not used here.
 
 # Enable basic features
 enableRobotsTXT = true
 enableEmoji = true
 
-# Output formats
+# Output formats. JSON came from the Stack theme's search index; Pagefind
+# replaces it (ISS-43), so nothing generates JSON for now.
 [outputs]
-home = ["HTML", "RSS", "JSON"]
-page = ["HTML", "JSON"]
-section = ["HTML", "RSS", "JSON"]
-taxonomy = ["HTML", "RSS", "JSON"]
+home = ["HTML", "RSS"]
+page = ["HTML"]
+section = ["HTML", "RSS"]
+taxonomy = ["HTML"]
+
+# Chroma emits classes rather than inline styles, mapped in chroma-map.css.
+# See docs/02-solution/syntax-highlighting.md in the planning repo.
+[markup.highlight]
+noClasses = false
+lineNos = false
+tabWidth = 2
+
+[markup.tableOfContents]
+startLevel = 2
+endLevel = 2
+ordered = true
 
 # Default language
 defaultContentLanguage = "en"

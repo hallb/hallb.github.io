@@ -1,0 +1,48 @@
+/* Chroma classes mapped onto the design's token roles.
+ *
+ * site.css carries across from design-system/ unchanged, so this file holds
+ * the generator-specific part: Hugo emits Chroma's class names, and the design
+ * names its roles .tk-kw, .tk-str and .tk-com.
+ *
+ * Only three roles carry any declaration in site.css:
+ *     .tk-kw, .tk-arrow  font-weight: 600
+ *     .tk-str            color: var(--accent)
+ *     .tk-com            color: var(--muted)
+ * Everything else is ink, so the remaining Chroma classes need no rule and
+ * are left alone deliberately.
+ *
+ * Checked against real output on 2026-09-15; see
+ * docs/02-solution/syntax-highlighting.md in the planning repo.
+ */
+
+/* keyword -> .tk-kw */
+.code .chroma .k,
+.code .chroma .kc,
+.code .chroma .kd,
+.code .chroma .kn,
+.code .chroma .kp,
+.code .chroma .kr { font-weight: 600; }
+
+/* string -> .tk-str.  .sa and .si are the affix and the interpolation braces
+ * of a Python f-string; without them an f-string renders part accent, part
+ * ink.  .l is an unquoted YAML scalar, which the reference marks as a string. */
+.code .chroma .s,
+.code .chroma .s1,
+.code .chroma .s2,
+.code .chroma .sb,
+.code .chroma .sd,
+.code .chroma .dl,
+.code .chroma .sa,
+.code .chroma .si,
+.code .chroma .l { color: var(--accent); }
+
+/* comment -> .tk-com */
+.code .chroma .c,
+.code .chroma .c1,
+.code .chroma .cm,
+.code .chroma .ch,
+.code .chroma .cs { color: var(--muted); }
+
+/* Chroma's own wrapper is replaced by .code in the render hook, but the
+ * <pre class="chroma"> survives and must not reintroduce a background. */
+.code pre.chroma { background: none; margin: 0; }

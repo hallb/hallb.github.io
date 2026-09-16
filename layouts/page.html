@@ -1,0 +1,23 @@
+{{ define "main" }}
+{{- $docs := eq .Section "docs" -}}
+<main id="main" class="page page--{{ if $docs }}docs{{ else }}post{{ end }}">
+<h1 class="title">{{ .Title }}</h1>
+<p class="byline">{{ with .Params.author }}{{ . }}<span aria-hidden="true"> · </span>{{ end }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>{{ with .Params.cluster }}<span aria-hidden="true"> · </span><a href="{{ "/" | relURL }}">{{ . }}</a>{{ else }}{{ if $docs }}<span aria-hidden="true"> · </span>Reference{{ end }}{{ end }}</p>
+
+{{- /* Toc-C. .TableOfContents is already scoped to H2 by
+       [markup.tableOfContents] in the config; only its <nav> wrapper is
+       dropped, so the <ol> sits directly inside the disclosure. */ -}}
+{{- $toc := .TableOfContents | string -}}
+{{- $toc = $toc | replaceRE `^\s*<nav id="TableOfContents">\s*` "" | replaceRE `\s*</nav>\s*$` "" -}}
+{{- if strings.Contains $toc "<li>" }}
+<details class="toc" open>
+  <summary>On this page</summary>
+  {{ $toc | safeHTML }}
+</details>
+{{- end }}
+
+<div class="prose">
+{{ partial "callouts.html" .Content }}
+</div>
+</main>
+{{ end }}

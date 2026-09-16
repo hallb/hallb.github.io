@@ -1,0 +1,17 @@
+{{- $section := .Section -}}
+<header class="site-header">
+  <div class="site-id"><a class="site-name" href="{{ "/" | relURL }}">Ben Hall</a><span class="site-domain">benhall.ca</span></div>
+  <nav class="site-nav" aria-label="Primary">
+    <a href="{{ "/" | relURL }}"{{ if or .IsHome (eq $section "post") }} aria-current="true"{{ end }}>Writing</a>
+    <a href="{{ "/archive/" | relURL }}">Archive</a>
+    <a href="{{ "/page/about/" | relURL }}">About</a>
+    <a href="{{ "/search/" | relURL }}">Search</a>
+  </nav>
+  <form class="header-search" action="{{ "/search/" | relURL }}" role="search">
+    <label class="search-field"><span class="slash" aria-hidden="true">/</span><input type="search" name="q" placeholder="Search" aria-label="Search benhall.ca"></label>
+  </form>
+  <button type="button" class="theme-toggle" aria-pressed="false" aria-label="Dark theme" title="Dark theme">
+    <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z"/></svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>
+  </button>
+</header>

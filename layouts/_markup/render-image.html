@@ -1,0 +1,16 @@
+{{- /* Figures. The diagram pipeline (ISS-47) replaces the <img> with an
+       inlined, colour-swapped SVG; until then the file is linked as-is. */ -}}
+{{- $caption := .Title -}}
+{{- $num := "" -}}
+{{- $rest := $caption -}}
+{{- if findRE `^Fig\.\s*\d+\s+—\s+` $caption -}}
+  {{- $num = index (findRE `^Fig\.\s*\d+` $caption) 0 -}}
+  {{- $rest = $caption | replaceRE `^Fig\.\s*\d+\s+—\s+` "" -}}
+{{- end -}}
+<figure class="diagram">
+  <div class="diagram__frame"><img src="{{ .Destination | relURL }}" alt="{{ .Text }}"></div>
+  {{- with $caption }}
+  <figcaption>{{ with $num }}<span class="fig-num">{{ . }}</span> — {{ end }}{{ $rest }}</figcaption>
+  {{- end }}
+  <div class="diagram__hint"><a href="{{ .Destination | relURL }}">tap to open full size</a><span aria-hidden="true">scroll →</span></div>
+</figure>
