@@ -7,7 +7,19 @@
      isolated document that the page's CSS variables cannot reach, and
      Diagram-A needs the placeholder colours swapped for var(--dg-*).
 
-     Anything that is not a bundled SVG falls back to a plain <img>. */ -}}
+     Three cases:
+     - an image inside a line of text stays a plain <img>;
+     - a bundled SVG on its own line is Diagram-A, inlined and themed;
+     - any other image on its own line (the photos and the infographic in the
+       archive) is an essay figure: caption in the rail, image on the measure.
+       Diagram-A's full-width white frame is for diagrams, and it made a 300px
+       photo look like a broken diagram.
+     "On its own line" needs wrapStandAloneImageWithinParagraph = false in the
+     config, or every image arrives inline inside a <p>. */ -}}
+
+{{- if not .IsBlock -}}
+<img src="{{ .Destination | relURL }}" alt="{{ .Text }}"{{ with .Title }} title="{{ . }}"{{ end }}>
+{{- else -}}
 
 {{- $caption := .Title -}}
 {{- $num := "" -}}
@@ -23,9 +35,32 @@
 {{- end -}}
 {{- $inline := and $res (strings.HasSuffix (lower .Destination) ".svg") -}}
 
+{{- if not $inline -}}
+  {{- $src := .Destination | relURL -}}
+  {{- with $res }}{{ $src = .RelPermalink }}{{ end -}}
+  {{- /* An image wider than the 560px measure is scaled down to fit, so it
+         links to the file at full size. Only images under static/ can be
+         measured here; a bundled raster image is a resource and has .Width. */ -}}
+  {{- $width := 0 -}}
+  {{- if $res -}}
+    {{- if eq $res.ResourceType "image" }}{{ $width = $res.Width }}{{ end -}}
+  {{- else if not (strings.Contains .Destination "://") -}}
+    {{- $file := path.Join "static" .Destination -}}
+    {{- if fileExists $file }}{{ $width = (images.Config $file).Width }}{{ end -}}
+  {{- end }}
+<figure class="figure">
+  {{- with $caption }}
+  <figcaption>{{ with $num }}<span class="fig-num">{{ . }}</span> — {{ end }}{{ $rest }}</figcaption>
+  {{- end }}
+  {{- if gt $width 560 }}
+  <a href="{{ $src }}"><img src="{{ $src }}" alt="{{ .Text }}"></a>
+  {{- else }}
+  <img src="{{ $src }}" alt="{{ .Text }}">
+  {{- end }}
+</figure>
+{{- else -}}
 <figure class="diagram">
   <div class="diagram__frame">
-  {{- if $inline -}}
     {{- $svg := $res.Content | string -}}
     {{- /* Strip anything before the root element: an inlined SVG is a
            fragment, not a document. */ -}}
@@ -65,12 +100,11 @@
     {{- $svg = $svg | replaceRE `(?i)#020202` "var(--dg-accent, #1B4FA0)" -}}
     {{- $svg = $svg | replaceRE `(?i)#030303` "var(--dg-muted, #474D54)" -}}
     {{- $svg | safeHTML -}}
-  {{- else -}}
-    <img src="{{ .Destination | relURL }}" alt="{{ .Text }}">
-  {{- end -}}
   </div>
   {{- with $caption }}
   <figcaption>{{ with $num }}<span class="fig-num">{{ . }}</span> — {{ end }}{{ $rest }}</figcaption>
   {{- end }}
-  <div class="diagram__hint" data-pagefind-ignore><a href="{{ with $res }}{{ .RelPermalink }}{{ else }}{{ $.Destination | relURL }}{{ end }}">tap to open full size</a><span aria-hidden="true">scroll →</span></div>
+  <div class="diagram__hint" data-pagefind-ignore><a href="{{ $res.RelPermalink }}">tap to open full size</a><span aria-hidden="true">scroll →</span></div>
 </figure>
+{{- end -}}
+{{- end -}}

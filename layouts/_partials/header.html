@@ -1,11 +1,20 @@
-{{- $section := .Section -}}
+{{- /* aria-current: "page" on the page a link points at, "true" on the
+       section a page belongs to (a post under Writing or Archive, the docs
+       fixture under Writing), as the reference pages mark them. */ -}}
+{{- $here := .RelPermalink -}}
+{{- $label := partial "section-label.html" . -}}
+{{- $current := dict
+      "writing" (cond .IsHome "page" (cond (or (eq $label "Writing") (eq .Section "docs")) "true" ""))
+      "archive" (cond (eq $here ("/archive/" | relURL)) "page" (cond (eq $label "Archive") "true" ""))
+      "about"   (cond (eq $here ("/page/about/" | relURL)) "page" "")
+      "search"  (cond (eq $here ("/search/" | relURL)) "page" "") -}}
 <header class="site-header">
   <div class="site-id"><a class="site-name" href="{{ "/" | relURL }}">Ben Hall</a><span class="site-domain">benhall.ca</span></div>
   <nav class="site-nav" aria-label="Primary">
-    <a href="{{ "/" | relURL }}"{{ if or .IsHome (eq $section "post") }} aria-current="true"{{ end }}>Writing</a>
-    <a href="{{ "/archive/" | relURL }}">Archive</a>
-    <a href="{{ "/page/about/" | relURL }}">About</a>
-    <a href="{{ "/search/" | relURL }}">Search</a>
+    <a href="{{ "/" | relURL }}"{{ with $current.writing }} aria-current="{{ . }}"{{ end }}>Writing</a>
+    <a href="{{ "/archive/" | relURL }}"{{ with $current.archive }} aria-current="{{ . }}"{{ end }}>Archive</a>
+    <a href="{{ "/page/about/" | relURL }}"{{ with $current.about }} aria-current="{{ . }}"{{ end }}>About</a>
+    <a href="{{ "/search/" | relURL }}"{{ with $current.search }} aria-current="{{ . }}"{{ end }}>Search</a>
   </nav>
   <form class="header-search" action="{{ "/search/" | relURL }}" role="search">
     <label class="search-field"><span class="slash" aria-hidden="true">/</span><input type="search" name="q" placeholder="Search" aria-label="Search benhall.ca"></label>

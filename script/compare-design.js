@@ -19,6 +19,12 @@ const targets = [
   { name: 'gen-diagram', url: `${GEN}/post/lineage-in-the-sql/` },
   { name: 'ref-docs', url: `${REF}/docs.html` },
   { name: 'gen-docs', url: `${GEN}/docs/crosswalk/` },
+  { name: 'ref-archive', url: `${REF}/archive.html` },
+  { name: 'gen-archive', url: `${GEN}/archive/` },
+  // Different posts: the reference's body is placeholder text. The title,
+  // byline and notice are what should line up.
+  { name: 'ref-archived', url: `${REF}/archived-post.html` },
+  { name: 'gen-archived', url: `${GEN}/post/2013-11-24-barque-smokehouse-shows-estimation-is-hard/` },
 ];
 
 (async () => {
@@ -67,6 +73,9 @@ const targets = [
               ? getComputedStyle(document.querySelector('.prose p')).fontSize : null,
             code: box('.code'),
             figure: box('figure.diagram'),
+            photo: box('figure.figure img'),
+            notice: box('.notice'),
+            archiveList: box('.archive-list'),
             tableWrap: box('.table-wrap'),
             toc: box('details.toc'),
             copyButtons: document.querySelectorAll('.code__head .copy').length,

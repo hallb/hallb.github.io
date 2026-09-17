@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · Ben Hall{{ end }}</title>
+<title>{{ block "title" . }}{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · Ben Hall{{ end }}{{ end }}</title>
 <meta name="color-scheme" content="light dark">
 {{ with .Params.summary }}<meta name="description" content="{{ . }}">{{ end }}
 <link rel="preconnect" href="https://fonts.googleapis.com">

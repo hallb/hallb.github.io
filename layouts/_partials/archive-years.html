@@ -1,0 +1,16 @@
+{{- /* The span of the archive as the page title and the notice on each
+       archived post print it, e.g. "2013–2014", from the posts themselves.
+       ISS-2 may move posts in or out, so nothing hard-codes the years. */ -}}
+{{- $years := slice -}}
+{{- range where site.RegularPages "Section" "post" -}}
+  {{- if eq (partial "section-label.html" .) "Archive" -}}
+    {{- $years = $years | append .Date.Year -}}
+  {{- end -}}
+{{- end -}}
+{{- $span := "" -}}
+{{- with $years -}}
+  {{- $first := index (sort .) 0 -}}
+  {{- $last := index (sort . "value" "desc") 0 -}}
+  {{- $span = cond (eq $first $last) (string $first) (printf "%d–%d" $first $last) -}}
+{{- end -}}
+{{- return $span -}}

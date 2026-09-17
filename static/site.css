@@ -384,7 +384,10 @@ html:not(.js) .theme-toggle { display: none; }
 
 /* ---------- Prose ---------- */
 
-.prose { padding-top: var(--body-top); }
+/* A word longer than the column, such as a bare URL used as link text,
+   breaks rather than widening the page. break-word, not anywhere, so it
+   changes nothing that already fits. */
+.prose { padding-top: var(--body-top); overflow-wrap: break-word; }
 .prose ~ .prose { padding-top: 0; }
 .lead + .prose { padding-top: 32px; }
 

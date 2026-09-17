@@ -17,6 +17,4 @@ Five cool things about it:
 
 And did I mention fire?
 
-![BioLite CampStove](/img/biolite-campstove-burns-wood-to-cook-dinner-charge-gadgets-1-300x300.jpg)
-
-<small>BioLite CampStove</small> 
+![BioLite CampStove](/img/biolite-campstove-burns-wood-to-cook-dinner-charge-gadgets-1-300x300.jpg "BioLite CampStove")

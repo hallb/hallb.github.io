@@ -30,6 +30,12 @@ startLevel = 2
 endLevel = 2
 ordered = true
 
+# An image alone in a paragraph reaches the image hook as a block (.IsBlock),
+# not wrapped in <p>. Both figure treatments emit <figure>, which is invalid
+# inside <p>: the browser closes the paragraph early and leaves an empty one.
+[markup.goldmark.parser]
+wrapStandAloneImageWithinParagraph = false
+
 # Default language
 defaultContentLanguage = "en"
 
@@ -67,6 +73,9 @@ params = { icon = "search" }
 thesis = "The power of plain text."
 thesisLine = "Plain text as the source of truth, at work and in life."
 mainSections = ["post"]
+# The byline's name on posts whose front matter has no author, which is every
+# post from the archive.
+author = "Ben Hall"
 favicon = "/favicon.ico"
 
 [params.sidebar]

@@ -4,16 +4,30 @@
        posts and nothing else keeps the home page, the docs fixture and the
        search page itself out of the results. */ -}}
 {{- $label := partial "section-label.html" . -}}
-<main id="main" class="page page--{{ if $docs }}docs{{ else }}post{{ end }}"{{ with $label }} data-pagefind-body data-pagefind-meta="section:{{ . }}"{{ end }}>
+{{- $archived := eq $label "Archive" -}}
+{{- /* Posts carry a name in the byline; the docs reference does not. */ -}}
+{{- $author := .Params.author | default (cond (ne $label "") site.Params.author "") -}}
+<main id="main" class="page page--{{ if $docs }}docs{{ else if $archived }}archived{{ else }}post{{ end }}"{{ with $label }} data-pagefind-body data-pagefind-meta="section:{{ . }}"{{ end }}>
 <h1 class="title">{{ .Title }}</h1>
-<p class="byline" data-pagefind-ignore>{{ with .Params.author }}{{ . }}<span aria-hidden="true"> · </span>{{ end }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>{{ with .Params.cluster }}<span aria-hidden="true"> · </span><a href="{{ "/" | relURL }}">{{ . }}</a>{{ else }}{{ if $docs }}<span aria-hidden="true"> · </span>Reference{{ end }}{{ end }}</p>
+<p class="byline" data-pagefind-ignore>{{ with $author }}{{ . }}<span aria-hidden="true"> · </span>{{ end }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>{{ if $archived }}<span aria-hidden="true"> · </span><a href="{{ "/archive/" | relURL }}">Archive</a>{{ else }}{{ with .Params.cluster }}<span aria-hidden="true"> · </span><a href="{{ "/" | relURL }}">{{ . }}</a>{{ else }}{{ if $docs }}<span aria-hidden="true"> · </span>Reference{{ end }}{{ end }}{{ end }}</p>
+
+{{- /* Archive-A's notice. Ignored by search, or every archived post would
+       match "archive" and "updated". */ -}}
+{{- if $archived }}
+<div class="admonition admonition--important notice" role="note" data-pagefind-ignore>
+  <div class="admonition__label">Archive</div>
+  <p><strong>From the {{ partial "archive-years.html" . }} archive.</strong> This post predates the current site and hasn't been updated.</p>
+</div>
+{{- end }}
 
 {{- /* Toc-C. .TableOfContents is already scoped to H2 by
        [markup.tableOfContents] in the config; only its <nav> wrapper is
        dropped, so the <ol> sits directly inside the disclosure. */ -}}
 {{- $toc := .TableOfContents | string -}}
 {{- $toc = $toc | replaceRE `^\s*<nav id="TableOfContents">\s*` "" | replaceRE `\s*</nav>\s*$` "" -}}
-{{- if strings.Contains $toc "<li>" }}
+{{- /* Not on archived posts, which match archived-post.html: they are short,
+       and the one that has a heading would get a single-entry TOC. */ -}}
+{{- if and (not $archived) (strings.Contains $toc "<li>") }}
 <details class="toc" open data-pagefind-ignore>
   <summary>On this page</summary>
   {{ $toc | safeHTML }}

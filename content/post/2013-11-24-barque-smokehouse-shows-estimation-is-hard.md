@@ -19,6 +19,4 @@ Toronto, ON
 M6R 2M3  
 P: (416) 532-7700
 
-![Dice](/img/4319839458_f275907f7b-300x228.jpg)
-
-<small>Might as well roll the dice</small> 
+![Dice](/img/4319839458_f275907f7b-300x228.jpg "Might as well roll the dice")

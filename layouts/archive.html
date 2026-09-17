@@ -1,0 +1,26 @@
+{{ define "title" }}{{ .Title }}{{ with partial "archive-years.html" . }}, {{ . }}{{ end }} · Ben Hall{{ end }}
+
+{{ define "main" }}
+{{- /* Archive-B: every post the label partial calls Archive, newest first,
+       each with the Archive chip. Posts are in no other section yet, so this
+       is a filter over post rather than a section of its own (ISS-2, ISS-5). */ -}}
+{{- $posts := slice -}}
+{{- range where site.RegularPages "Section" "post" -}}
+  {{- if eq (partial "section-label.html" .) "Archive" }}{{ $posts = $posts | append . }}{{ end -}}
+{{- end -}}
+<main id="main" class="page page--archive">
+<h1 class="title">{{ .Title }}{{ with partial "archive-years.html" . }}, {{ . }}{{ end }}</h1>
+{{- with .Params.lead }}
+<p class="lead">{{ . }}</p>
+{{- end }}
+<p class="section-label">{{ len $posts }} {{ cond (eq (len $posts) 1) "post" "posts" }}</p>
+<ul class="archive-list">
+  {{- range $posts }}
+  <li>
+    <div class="entry-meta"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time><span class="chip" aria-hidden="true">Archive</span></div>
+    <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+  </li>
+  {{- end }}
+</ul>
+</main>
+{{ end }}
