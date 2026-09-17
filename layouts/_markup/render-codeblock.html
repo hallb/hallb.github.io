@@ -8,7 +8,7 @@
 
 {{- if $console -}}
 <div class="code console">
-  <div class="code__head"><span>console</span>{{ with $file }}<span>{{ . }}</span>{{ end }}</div>
+  <div class="code__head" data-pagefind-ignore><span>console</span>{{ with $file }}<span>{{ . }}</span>{{ end }}</div>
 <pre><code>{{- range $i, $line := split $code "\n" -}}
 {{- if and (eq $i (sub (len (split $code "\n")) 1)) (eq $line "") -}}{{- else -}}
 {{- if hasPrefix $line "$" }}<span class="in">{{ $line }}</span>
@@ -16,7 +16,7 @@
 {{ end -}}
 {{- end -}}
 {{- end -}}</code></pre>
-  <div class="scroll-hint" aria-hidden="true">scroll →</div>
+  <div class="scroll-hint" aria-hidden="true" data-pagefind-ignore>scroll →</div>
 </div>
 
 {{- else -}}
@@ -31,8 +31,8 @@
   {{- /* Code callouts: "# (1)" and "-- (1)" become numbered pills. */ -}}
   {{- $html = $html | replaceRE `(#|--) \((\d+)\)` `$1 <span class="pill">$2</span>` -}}
 <div class="code">
-  <div class="code__head"><span>{{ $lang | default "text" }}</span>{{ with $file }}<span>{{ . }}</span>{{ end }}</div>
+  <div class="code__head" data-pagefind-ignore><span>{{ $lang | default "text" }}</span>{{ with $file }}<span>{{ . }}</span>{{ end }}</div>
 {{ $html | safeHTML }}
-  <div class="scroll-hint" aria-hidden="true">scroll →</div>
+  <div class="scroll-hint" aria-hidden="true" data-pagefind-ignore>scroll →</div>
 </div>
 {{- end -}}

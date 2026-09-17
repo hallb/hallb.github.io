@@ -53,3 +53,24 @@ list-diagrams:
 
 clean-diagrams:
 	rm -f $(DIAGRAMS)
+
+
+# ---------- Site build and search (ISS-43, ISS-46) ----------
+#
+# Pagefind indexes the built HTML, so it runs after hugo, over public/. The
+# index lands in public/pagefind/, which is ignored along with the rest of
+# public/. `hugo server` never has an index; use `make preview` to try search.
+#
+#     make site      build the fixtures (drafts and future dates) and index them
+#     make preview   the same, then serve public/ on http://localhost:1414
+
+PAGEFIND := npx -y pagefind@1.5.2
+
+.PHONY: site preview
+
+site:
+	hugo -D -F --cleanDestinationDir
+	$(PAGEFIND) --site public
+
+preview: site
+	$(PAGEFIND) --site public --serve

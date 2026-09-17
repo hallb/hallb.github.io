@@ -1,0 +1,23 @@
+{{ define "head" }}
+<script src="{{ "search.js" | relURL }}" defer></script>
+{{ end }}
+
+{{ define "main" }}
+<main id="main" class="page page--search">
+<h1 class="title">{{ .Title }}</h1>
+<p class="search-intro">Client-side over the built pages. Results come from Writing and the Archive.</p>
+<form class="search-form" action="{{ .RelPermalink }}" role="search">
+  <label class="search-field">
+    <span class="slash" aria-hidden="true">/</span>
+    <input type="search" id="search-input" name="q" placeholder="Search benhall.ca" aria-label="Search benhall.ca" autocomplete="off">
+  </label>
+</form>
+<noscript>
+  <div class="admonition admonition--important" role="note">
+    <div class="admonition__label">No script</div>
+    <p>Search needs JavaScript. Browse <a href="{{ "/" | relURL }}">Writing</a> or the <a href="{{ "/archive/" | relURL }}">Archive</a> instead.</p>
+  </div>
+</noscript>
+<div id="search-results" aria-live="polite" data-pagefind="{{ "pagefind/pagefind.js" | relURL }}" data-writing="{{ "/" | relURL }}" data-archive="{{ "/archive/" | relURL }}"></div>
+</main>
+{{ end }}

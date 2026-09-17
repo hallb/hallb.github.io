@@ -72,5 +72,5 @@
   {{- with $caption }}
   <figcaption>{{ with $num }}<span class="fig-num">{{ . }}</span> — {{ end }}{{ $rest }}</figcaption>
   {{- end }}
-  <div class="diagram__hint"><a href="{{ with $res }}{{ .RelPermalink }}{{ else }}{{ $.Destination | relURL }}{{ end }}">tap to open full size</a><span aria-hidden="true">scroll →</span></div>
+  <div class="diagram__hint" data-pagefind-ignore><a href="{{ with $res }}{{ .RelPermalink }}{{ else }}{{ $.Destination | relURL }}{{ end }}">tap to open full size</a><span aria-hidden="true">scroll →</span></div>
 </figure>

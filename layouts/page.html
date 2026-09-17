@@ -1,8 +1,12 @@
 {{ define "main" }}
 {{- $docs := eq .Section "docs" -}}
-<main id="main" class="page page--{{ if $docs }}docs{{ else }}post{{ end }}">
+{{- /* Pagefind indexes only pages marked data-pagefind-body, so marking
+       posts and nothing else keeps the home page, the docs fixture and the
+       search page itself out of the results. */ -}}
+{{- $label := partial "section-label.html" . -}}
+<main id="main" class="page page--{{ if $docs }}docs{{ else }}post{{ end }}"{{ with $label }} data-pagefind-body data-pagefind-meta="section:{{ . }}"{{ end }}>
 <h1 class="title">{{ .Title }}</h1>
-<p class="byline">{{ with .Params.author }}{{ . }}<span aria-hidden="true"> · </span>{{ end }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>{{ with .Params.cluster }}<span aria-hidden="true"> · </span><a href="{{ "/" | relURL }}">{{ . }}</a>{{ else }}{{ if $docs }}<span aria-hidden="true"> · </span>Reference{{ end }}{{ end }}</p>
+<p class="byline" data-pagefind-ignore>{{ with .Params.author }}{{ . }}<span aria-hidden="true"> · </span>{{ end }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>{{ with .Params.cluster }}<span aria-hidden="true"> · </span><a href="{{ "/" | relURL }}">{{ . }}</a>{{ else }}{{ if $docs }}<span aria-hidden="true"> · </span>Reference{{ end }}{{ end }}</p>
 
 {{- /* Toc-C. .TableOfContents is already scoped to H2 by
        [markup.tableOfContents] in the config; only its <nav> wrapper is
@@ -10,7 +14,7 @@
 {{- $toc := .TableOfContents | string -}}
 {{- $toc = $toc | replaceRE `^\s*<nav id="TableOfContents">\s*` "" | replaceRE `\s*</nav>\s*$` "" -}}
 {{- if strings.Contains $toc "<li>" }}
-<details class="toc" open>
+<details class="toc" open data-pagefind-ignore>
   <summary>On this page</summary>
   {{ $toc | safeHTML }}
 </details>

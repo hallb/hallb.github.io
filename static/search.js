@@ -1,42 +1,10 @@
-// Search-A over a hand-written index of the reference pages. The real site
-// replaces INDEX with a post-build indexer such as Pagefind (ISS-43); the
-// rendering below is what it should keep.
-
-const INDEX = [
-  { section: 'Writing', url: 'essay.html', title: 'The power of plain text',
-    text: 'Plain text separates content from presentation, which is why several tools, several people and now a model can work on the same file and see what changed.' },
-  { section: 'Writing', url: 'essay.html', title: 'Diagrams as code',
-    text: 'A diagram rendered from a text model can be reviewed, versioned and regenerated. Tools like Graphviz and PlantUML render a diagram from a text model that can be reviewed.' },
-  { section: 'Writing', url: 'diagram-post.html', title: 'Your database already knows its diagram',
-    text: 'The foreign keys are sitting in the catalogue, and a graph is just a list of edges. It prints DOT, the text format Graphviz reads, and does nothing else.' },
-  { section: 'Writing', url: 'essay.html', title: 'Embedding generated diagrams into documents and pipelines', text: '' },
-  { section: 'Writing', url: 'essay.html', title: 'Multiple views over a single model',
-    text: 'One model, rendered as several views. Graphviz is the lowest-level option.' },
-  { section: 'Writing', url: 'essay.html', title: 'Ilograph, LikeC4, and PlantUML plus an LLM', text: '' },
-  { section: 'Writing', url: 'essay.html', title: 'Lineage, dependency and ER graphs from a real system', text: '' },
-  { section: 'Writing', url: 'essay.html', title: 'Textual DSLs that render to useful output', text: '' },
-  { section: 'Writing', url: 'essay.html', title: 'Beancount in practice', text: '' },
-  { section: 'Writing', url: 'essay.html', title: 'Writing external DSLs to model a domain', text: '' },
-  { section: 'Writing', url: 'essay.html', title: 'Project tracking as markdown in the repository', text: '' },
-  { section: 'Writing', url: 'essay.html', title: 'Spec-driven development in markdown',
-    text: 'The spec is the reviewed, durable text, and the requirements live next to the code.' },
-  { section: 'Writing', url: 'essay.html', title: 'Choosing a match threshold is a decision about who gets counted',
-    text: 'Every entity resolution system has a number in it that decides which records refer to the same thing. Above the number, two rows are one business. Below it, they are two businesses.' },
-  { section: 'Archive', url: 'archived-post.html', title: 'Five Cool Things About the BioLite CampStove', text: '' },
-  { section: 'Archive', url: 'archived-post.html', title: 'Requirements: Dysfunction Non-function Junction',
-    text: 'The requirements nobody writes down until the system falls over.' },
-  { section: 'Archive', url: 'archived-post.html', title: 'Non-functional Requirements are Underappreciated',
-    text: 'Requirements that describe how a system behaves rather than what it does.' },
-  { section: 'Archive', url: 'archived-post.html', title: 'Rail Link Beats Toronto Island Airport Expansion', text: '' },
-  { section: 'Archive', url: 'archived-post.html', title: 'Barque Smokehouse Shows Estimation is Hard', text: '' },
-  { section: 'Archive', url: 'archived-post.html', title: 'Setting Up Defensio Anti-spam in Wordpress', text: '' },
-  { section: 'Archive', url: 'archived-post.html', title: 'Pinterest for Business and All in One SEO Pack', text: '' },
-  { section: 'Archive', url: 'archived-post.html', title: 'Setting up All In One SEO Pack', text: '' },
-  { section: 'Archive', url: 'archived-post.html', title: 'Lots of Ben Halls on the Internet', text: '' },
-  { section: 'Archive', url: 'archived-post.html', title: 'First Post', text: '' },
-];
-
-const CONTEXT = 90;
+// Search-A over a Pagefind index of the built site (ISS-43). The rendering is
+// the reference's from design-system/search.js; the index and the excerpt are
+// what changed.
+//
+// Pagefind runs over public/ after hugo and writes public/pagefind/. It only
+// indexes pages marked data-pagefind-body, which layouts/page.html puts on
+// posts, along with their Writing or Archive label as the "section" meta.
 
 const el = (tag, props = {}, ...children) => {
   const node = Object.assign(document.createElement(tag), props);
@@ -44,69 +12,102 @@ const el = (tag, props = {}, ...children) => {
   return node;
 };
 
-// About CONTEXT characters either side of the first hit, cut at word edges,
-// with the hit in <mark>. Built from text nodes, so nothing is parsed as HTML.
-function excerpt(text, needle) {
-  const at = text.toLowerCase().indexOf(needle);
-  if (at < 0) return el('p', { textContent: text });
+// Pagefind's excerpt is a string of HTML with <mark> around each hit. It is
+// split on the marks and each piece decoded to plain text, so the page only
+// receives text nodes and <mark> elements built here. A detached textarea
+// parses its content as text, so entities decode and tags stay literal. (A
+// DOMParser document would drop the space after a hit, which leads its piece.)
+const scratch = document.createElement('textarea');
+const decode = (html) => {
+  scratch.innerHTML = html;
+  return scratch.value;
+};
 
-  let start = Math.max(0, at - CONTEXT);
-  const space = text.indexOf(' ', start);
-  if (start > 0 && space !== -1 && space < at) start = space + 1;
-
-  const hitEnd = at + needle.length;
-  let end = Math.min(text.length, hitEnd + CONTEXT);
-  const lastSpace = text.lastIndexOf(' ', end);
-  if (end < text.length && lastSpace > hitEnd) end = lastSpace;
-
-  return el('p', {},
-    (start > 0 ? '…' : '') + text.slice(start, at),
-    el('mark', { textContent: text.slice(at, hitEnd) }),
-    text.slice(hitEnd, end) + (end < text.length ? '…' : ''));
+function excerpt(html) {
+  return el('p', {}, ...html.split(/<mark>|<\/mark>/).map((part, i) =>
+    i % 2 ? el('mark', { textContent: decode(part) }) : decode(part)));
 }
 
-function render(out, query) {
-  out.replaceChildren();
-  const q = query.trim();
-  if (!q) return;
-  const needle = q.toLowerCase();
+function browse(links, before, after) {
+  return el('div', { className: 'no-results' },
+    el('p', {},
+      before,
+      el('a', { href: links.writing, textContent: 'Writing' }),
+      ' or the ',
+      el('a', { href: links.archive, textContent: 'Archive' }),
+      after));
+}
 
-  const hits = INDEX.filter((entry) =>
-    entry.title.toLowerCase().includes(needle) || entry.text.toLowerCase().includes(needle));
+// When a word matches nothing, Pagefind shortens it until something does, so
+// "crosswalk" finds the "c" in "grep -c" and "xyzzy" finds a lone "x". A page
+// is kept only if every word in the query shares at least four leading
+// characters (or the whole word, if shorter) with some word on the page. That
+// still lets stemming through: "estimate" and "estimation" share six.
+const words = (text) => text.toLowerCase().match(/[\p{L}\p{N}]+/gu) || [];
 
-  if (!hits.length) {
-    out.append(el('div', { className: 'no-results' },
-      el('p', {},
-        `No results for “${q}”. Try a shorter search, or browse `,
-        el('a', { href: 'index.html', textContent: 'Writing' }),
-        ' or the ',
-        el('a', { href: 'archive.html', textContent: 'Archive' }),
-        '.')));
+function matchesEveryWord(query, content) {
+  const onPage = words(content);
+  return words(query).every((term) => {
+    const need = Math.min(term.length, 4);
+    return onPage.some((word) => word.slice(0, need) === term.slice(0, need));
+  });
+}
+
+async function render(out, field, pagefind, links) {
+  const q = field.value.trim();
+  if (!q) {
+    out.replaceChildren();
     return;
   }
 
-  out.append(
+  // Null means a later keystroke superseded this search; that one renders.
+  const search = await pagefind.debouncedSearch(q);
+  if (search === null) return;
+  const hits = (await Promise.all(search.results.map((result) => result.data())))
+    .filter((hit) => matchesEveryWord(q, `${hit.meta.title} ${hit.content}`));
+  if (field.value.trim() !== q) return;
+
+  if (!hits.length) {
+    out.replaceChildren(browse(links, `No results for “${q}”. Try a shorter search, or browse `, '.'));
+    return;
+  }
+
+  out.replaceChildren(
     el('p', { className: 'section-label results-count', textContent: `${hits.length} ${hits.length === 1 ? 'result' : 'results'}` }),
-    el('ul', { className: 'results' }, ...hits.map((entry) => el('li', {},
-      el('div', { className: 'entry-meta' },
-        el('span', { className: `chip chip--${entry.section.toLowerCase()}`, textContent: entry.section }),
-        el('h2', {}, el('a', { href: entry.url, textContent: entry.title }))),
-      entry.text ? excerpt(entry.text, needle) : '')))
-  );
+    el('ul', { className: 'results' }, ...hits.map((hit) => {
+      const section = hit.meta.section || 'Writing';
+      return el('li', {},
+        el('div', { className: 'entry-meta' },
+          el('span', { className: `chip chip--${section.toLowerCase()}`, textContent: section }),
+          el('h2', {}, el('a', { href: hit.url, textContent: hit.meta.title }))),
+        hit.excerpt ? excerpt(hit.excerpt) : '');
+    })));
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const input = document.getElementById('search-input');
+document.addEventListener('DOMContentLoaded', async () => {
+  const field = document.getElementById('search-input');
   const out = document.getElementById('search-results');
-  if (!input || !out) return;
+  if (!field || !out) return;
 
-  input.value = new URLSearchParams(location.search).get('q') || '';
-  render(out, input.value);
+  const links = { writing: out.dataset.writing, archive: out.dataset.archive };
+  field.value = new URLSearchParams(location.search).get('q') || '';
+  field.closest('form').addEventListener('submit', (event) => event.preventDefault());
 
-  input.closest('form').addEventListener('submit', (event) => event.preventDefault());
-  input.addEventListener('input', () => {
-    const q = input.value.trim();
+  // The index exists only after Pagefind has run, so `hugo server` on its own
+  // ends up here. Say so, rather than leave an empty box.
+  let pagefind;
+  try {
+    pagefind = await import(out.dataset.pagefind);
+    await pagefind.init();
+  } catch {
+    out.replaceChildren(browse(links, 'Search isn’t available right now. Browse ', ' instead.'));
+    return;
+  }
+
+  render(out, field, pagefind, links);
+  field.addEventListener('input', () => {
+    const q = field.value.trim();
     history.replaceState(null, '', q ? `?q=${encodeURIComponent(q)}` : location.pathname);
-    render(out, input.value);
+    render(out, field, pagefind, links);
   });
 });

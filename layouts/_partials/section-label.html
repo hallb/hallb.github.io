@@ -1,0 +1,14 @@
+{{- /* Which register a page belongs to, as search and the archive show it:
+       "Writing", "Archive", or "" for anything that is neither.
+
+       ISS-2 has not decided the archive yet, so the rule is the reference's:
+       a post dated before 2015 is Archive, and any other post is Writing.
+       An `archive: true` or `archive: false` in front matter overrides the
+       date, which is where ISS-2's answer for individual posts would go. */ -}}
+{{- $label := "" -}}
+{{- if eq .Section "post" -}}
+  {{- $archived := lt .Date.Year 2015 -}}
+  {{- if isset .Params "archive" }}{{ $archived = .Params.archive }}{{ end -}}
+  {{- $label = cond $archived "Archive" "Writing" -}}
+{{- end -}}
+{{- return $label -}}
