@@ -62,6 +62,10 @@ params = { icon = "search" }
 
 # Basic theme settings
 [params]
+# Home-B's heading. The wording is the design-system reference's
+# (design-system/index.html), not yet signed off as the site's.
+thesis = "The power of plain text."
+thesisLine = "Plain text as the source of truth, at work and in life."
 mainSections = ["post"]
 favicon = "/favicon.ico"
 

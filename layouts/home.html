@@ -1,13 +1,16 @@
 {{ define "main" }}
+{{- /* Home-B: Writing only, newest first. Archive posts live on the archive
+       page, so the label partial decides what shows here. */ -}}
 <main id="main" class="page page--home">
-<h1 class="title">{{ site.Params.sidebar.subtitle | default site.Title }}</h1>
+<h1 class="thesis">{{ site.Params.thesis }} <span>{{ site.Params.thesisLine }}</span></h1>
 <ul class="post-list">
   {{- range where site.RegularPages "Section" "post" }}
-  <li class="post-item">
-    <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
-    <p class="byline"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>{{ with .Params.cluster }}<span aria-hidden="true"> · </span>{{ . }}{{ end }}</p>
-    {{- with .Params.summary }}<p>{{ . }}</p>{{ end }}
+  {{- if eq (partial "section-label.html" .) "Writing" }}
+  <li>
+    <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>
+    <div><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ with .Params.cluster }}<span class="cluster">{{ . }}</span>{{ end }}</div>
   </li>
+  {{- end }}
   {{- end }}
 </ul>
 </main>

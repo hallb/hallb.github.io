@@ -36,6 +36,20 @@
   --pad-x: 96px;
   --pad-y: 88px;
 
+  /* The widest the header, page and footer grow: 1280px less the padding.
+     Past it the side padding grows instead, so a wide window shows the
+     1280px layout centred rather than a header stretched away from the
+     measure. The percentage resolves where --edge is used. */
+  --frame: 1088px;
+  --edge: max(var(--pad-x), (100% - var(--frame)) / 2);
+
+  /* The header and footer end where the page grid ends (rail, gutter and
+     measure: the right edge of the text and of .full blocks), not at the
+     frame, so the header does not overhang the text on the right. --edge-end
+     is the right padding that leaves exactly that width. */
+  --grid: calc(var(--rail) + var(--gutter) + var(--measure));
+  --edge-end: max(var(--edge), 100% - var(--edge) - var(--grid));
+
   --title: 3.375rem;    /* 54 */
   --h2: 2.5rem;         /* 40 */
   --h3: 1.875rem;       /* 30 */
@@ -119,7 +133,7 @@ code { font-family: var(--mono); }
 .skip {
   position: absolute;
   top: 8px;
-  left: var(--pad-x);
+  left: var(--edge);
   transform: translateY(-200%);
   padding: 4px 10px;
   border: 2px solid var(--line);
@@ -144,7 +158,7 @@ code { font-family: var(--mono); }
     "nav .  search theme";
   align-items: center;
   column-gap: 14px;
-  padding: 0 var(--pad-x);
+  padding: 0 var(--edge-end) 0 var(--edge);
   border-bottom: 2px solid var(--line);
 }
 
@@ -269,7 +283,7 @@ html:not(.js) .theme-toggle { display: none; }
 
 .site-footer {
   margin-top: var(--foot-mt);
-  padding: 0 var(--pad-x) var(--foot-pb);
+  padding: 0 var(--edge-end) var(--foot-pb) var(--edge);
   color: var(--muted);
 }
 
@@ -293,7 +307,7 @@ html:not(.js) .theme-toggle { display: none; }
 .page {
   display: grid;
   grid-template-columns: var(--rail) var(--gutter) minmax(0, var(--measure));
-  padding: var(--pad-y) var(--pad-x) 0;
+  padding: var(--pad-y) var(--edge) 0;
 }
 .page > * { grid-column: 3; min-width: 0; }
 .page > .full { grid-column: 1 / -1; }
@@ -874,6 +888,7 @@ mark {
     --rail: 0px;
     --gutter: 0px;
     --measure: 1fr;
+    --grid: 100%;         /* 1fr cannot be added up; the grid is the column */
     --pad-x: 20px;
     --pad-y: 28px;
 
@@ -905,7 +920,7 @@ mark {
     grid-template-areas:
       "id  theme"
       "nav nav";
-    padding: 16px var(--pad-x) 10px;
+    padding: 16px var(--edge) 10px;
   }
   .site-id { gap: 10px; margin-bottom: 12px; padding: 0; border-bottom: 0; }
   .site-name { font-size: 1.1875rem; }
