@@ -1,0 +1,29 @@
+{{- /* Show a diagram's source file as a code block, so the post and the
+       figure read the same file and cannot disagree.
+
+           {{% diagram-source "figures/lineage.dot" %}}
+
+       The % delimiters matter: the output is a markdown fence, so it goes
+       through render-codeblock.html like any other block. The file comes
+       from the page bundle, and its extension picks the language label.
+       Markdown viewers outside the site (GitHub, pandoc) show the shortcode
+       itself, not the source; the linked SVG still renders there. */ -}}
+{{- $path := .Get 0 -}}
+{{- $res := .Page.Resources.Get $path -}}
+{{- if not $res -}}
+  {{- errorf "diagram-source: %q is not in the page bundle of %s" $path .Page.File.Path -}}
+{{- else -}}
+{{- $ext := path.Ext $path | strings.TrimPrefix "." -}}
+{{- $lang := index (dict "dot" "dot" "gv" "dot" "puml" "plantuml" "mmd" "mermaid") $ext | default $ext -}}
+{{- $src := $res.Content | string | strings.TrimRight "\n" -}}
+{{- /* A fence longer than any run of backticks in the file. */ -}}
+{{- $fence := "```" -}}
+{{- range findRE "`{3,}" $src -}}
+  {{- if ge (len .) (len $fence) }}{{ $fence = strings.Repeat (add (len .) 1) "`" }}{{ end -}}
+{{- end -}}
+{{- /* safeHTML because this is markdown, not HTML: the code block hook
+       escapes it, and escaping here as well showed -> as -&gt;. */ -}}
+{{ $fence }}{{ $lang }}
+{{ $src | safeHTML }}
+{{ $fence }}
+{{- end -}}

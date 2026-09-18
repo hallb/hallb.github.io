@@ -1,0 +1,24 @@
+' The site's diagram style for PlantUML sources. The Makefile passes it with
+' -I, which includes it at the top of every diagram, so a source holds only
+' the diagram and a post can show the file as it is.
+'
+' Colours are the four placeholders that diagrams/theme-svg.py swaps for CSS
+' variables: #010101 ink, #FEFEFD card, #020202 accent, #030303 muted.
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundCorner 3
+skinparam defaultFontName "Atkinson Hyperlegible"
+skinparam defaultFontColor #010101
+skinparam ArrowColor #010101
+skinparam ArrowFontColor #030303
+skinparam ActivityBorderColor #010101
+skinparam ActivityBackgroundColor #FEFEFD
+skinparam ActivityDiamondBorderColor #010101
+skinparam ActivityDiamondBackgroundColor #FEFEFD
+skinparam ActivityStartColor #010101
+skinparam ActivityEndColor #010101
+skinparam NoteBorderColor #030303
+skinparam NoteBackgroundColor #FEFEFD
+
+' Emphasis, by name: -[HIGHLIGHT]-> is the one arrow the reader should follow.
+!define HIGHLIGHT #020202

@@ -145,23 +145,11 @@ $ dot -Tsvg lineage.dot -o lineage.svg
 The DOT file is small enough to read, and it diffs cleanly when a job
 changes:
 
-```dot
-digraph lineage {
-  graph [rankdir=LR];
-  raw_harvest -> stage_harvest;
-  raw_orders -> stage_orders;
-  stage_harvest -> box_contents;
-  stage_orders -> box_contents;
-  box_contents -> route_plan;
-  stage_orders -> route_plan;
-  box_contents -> waste_report;
-  stage_harvest -> waste_report;
-}
-```
+{{% diagram-source "figures/lineage.dot" %}}
 
-The figure adds styling to that output. The dashed tables are loaded from
-outside the warehouse. The highlighted edge is the one `jobs.yml` doesn't know
-about.
+The two `external` tables are loaded from outside the warehouse, and the
+`highlight` edge is the one `jobs.yml` doesn't know about. The site's diagram
+style draws them dashed and in the accent colour.
 
 ![Seven tables flowing left to right from raw harvest and orders to the route plan and waste report, with the edge from box contents to route plan highlighted](figures/lineage.svg "Fig. 1 — Table lineage, parsed from the SQL of five jobs")
 
@@ -184,19 +172,7 @@ On 14 August, a grower synced a late harvest and `stage_harvest` took six
 minutes instead of the usual three. `box_contents` waited for it, as `after`
 says it should. `route_plan` didn't wait, because nothing told it to.
 
-```mermaid
-gantt
-    dateFormat HH:mm
-    axisFormat %H:%M
-    section Staging
-    stage_harvest :done, sh, 02:30, 6m
-    stage_orders  :done, so, 02:30, 3m
-    section Boxes
-    box_contents  :done, bc, after sh so, 17m
-    waste_report  :done, wr, after bc, 2m
-    section Routes
-    route_plan    :crit, rp, after so, 3m
-```
+{{% diagram-source "figures/nightly-run.mmd" %}}
 
 ![Gantt chart of the nightly run, with route_plan finishing at 02:36 while box_contents runs from 02:36 to 02:53](figures/nightly-run.svg "Fig. 2 — The run on 14 August. route_plan read the previous night's boxes")
 
@@ -218,27 +194,7 @@ a chain of `after`. The chain matters: `waste_report` reads `stage_harvest`
 but only lists `box_contents`, and that's correct, because `box_contents`
 already runs after `stage_harvest`.
 
-```plantuml
-@startuml
-start
-:Read jobs.yml;
-:Parse each job's SQL;
-repeat
-  :Take the next edge;
-  if (Job runs after the writer?) then (yes)
-  else (no)
-    :Record an ordering problem;
-  endif
-repeat while (More edges?)
-if (Any problems?) then (yes)
-  :Fail the pull request;
-  stop
-else (no)
-  :Render lineage.svg;
-  stop
-endif
-@enduml
-```
+{{% diagram-source "figures/order-check.puml" %}}
 
 ![Activity diagram of the order check, which fails the pull request when a job reads a table before its writer has run](figures/order-check.svg "Fig. 3 — The order check, run on every pull request that changes a job")
 

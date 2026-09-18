@@ -5,99 +5,99 @@
  -->
 <!-- Title: lineage Pages: 1 -->
 <svg width="600pt" height="139pt"
- viewBox="0.00 0.00 600.00 139.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ viewBox="0.00 0.00 600.00 139.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><style id="dg-theme">svg{--dg-ink:#1A1A1A;--dg-card:#FFFFFF;--dg-muted:#474D54;--dg-accent:#1B4FA0;color:var(--dg-ink)}@media (prefers-color-scheme: dark){svg{--dg-ink:#F2F4F6;--dg-card:#1C2126;--dg-muted:#A3ACB6;--dg-accent:#8FB6EE}}</style>
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(14.4 124.4)">
 <title>lineage</title>
 <!-- raw_harvest -->
-<g id="node1" class="node">
+<g id="node1" class="node external">
 <title>raw_harvest</title>
-<polygon fill="#fefefd" stroke="#030303" stroke-width="1.5" stroke-dasharray="5,2" points="83.5,-104 0,-104 0,-68 83.5,-68 83.5,-104"/>
-<text xml:space="preserve" text-anchor="middle" x="41.75" y="-82.3" font-family="Atkinson Hyperlegible Mono" font-size="11.00" fill="#030303">raw_harvest</text>
+<polygon fill="var(--dg-card, #FFFFFF)" stroke="var(--dg-muted, #474D54)" stroke-width="1.5" stroke-dasharray="5,2" points="83.5,-104 0,-104 0,-68 83.5,-68 83.5,-104"/>
+<text xml:space="preserve" text-anchor="middle" x="41.75" y="-82.3" font-family="Atkinson Hyperlegible Mono" font-size="11.00" fill="var(--dg-muted, #474D54)">raw_harvest</text>
 </g>
 <!-- stage_harvest -->
 <g id="node3" class="node">
 <title>stage_harvest</title>
-<polygon fill="#fefefd" stroke="#010101" stroke-width="1.5" points="222.5,-104 128.5,-104 128.5,-68 222.5,-68 222.5,-104"/>
-<text xml:space="preserve" text-anchor="middle" x="175.5" y="-82.3" font-family="Atkinson Hyperlegible Mono" font-size="11.00" fill="#010101">stage_harvest</text>
+<polygon fill="var(--dg-card, #FFFFFF)" stroke="var(--dg-ink, #1A1A1A)" stroke-width="1.5" points="222.5,-104 128.5,-104 128.5,-68 222.5,-68 222.5,-104"/>
+<text xml:space="preserve" text-anchor="middle" x="175.5" y="-82.3" font-family="Atkinson Hyperlegible Mono" font-size="11.00" fill="var(--dg-ink, #1A1A1A)">stage_harvest</text>
 </g>
 <!-- raw_harvest&#45;&gt;stage_harvest -->
 <g id="edge1" class="edge">
 <title>raw_harvest&#45;&gt;stage_harvest</title>
-<path fill="none" stroke="#010101" d="M84.08,-86C95.25,-86 107.52,-86 119.32,-86"/>
-<polygon fill="#010101" stroke="#010101" points="119.3,-88.45 126.3,-86 119.3,-83.55 119.3,-88.45"/>
+<path fill="none" stroke="var(--dg-ink, #1A1A1A)" d="M84.08,-86C95.25,-86 107.52,-86 119.32,-86"/>
+<polygon fill="var(--dg-ink, #1A1A1A)" stroke="var(--dg-ink, #1A1A1A)" points="119.3,-88.45 126.3,-86 119.3,-83.55 119.3,-88.45"/>
 </g>
 <!-- raw_orders -->
-<g id="node2" class="node">
+<g id="node2" class="node external">
 <title>raw_orders</title>
-<polygon fill="#fefefd" stroke="#030303" stroke-width="1.5" stroke-dasharray="5,2" points="80.12,-36 3.38,-36 3.38,0 80.12,0 80.12,-36"/>
-<text xml:space="preserve" text-anchor="middle" x="41.75" y="-14.3" font-family="Atkinson Hyperlegible Mono" font-size="11.00" fill="#030303">raw_orders</text>
+<polygon fill="var(--dg-card, #FFFFFF)" stroke="var(--dg-muted, #474D54)" stroke-width="1.5" stroke-dasharray="5,2" points="80.12,-36 3.38,-36 3.38,0 80.12,0 80.12,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="41.75" y="-14.3" font-family="Atkinson Hyperlegible Mono" font-size="11.00" fill="var(--dg-muted, #474D54)">raw_orders</text>
 </g>
 <!-- stage_orders -->
 <g id="node4" class="node">
 <title>stage_orders</title>
-<polygon fill="#fefefd" stroke="#010101" stroke-width="1.5" points="219.12,-36 131.88,-36 131.88,0 219.12,0 219.12,-36"/>
-<text xml:space="preserve" text-anchor="middle" x="175.5" y="-14.3" font-family="Atkinson Hyperlegible Mono" font-size="11.00" fill="#010101">stage_orders</text>
+<polygon fill="var(--dg-card, #FFFFFF)" stroke="var(--dg-ink, #1A1A1A)" stroke-width="1.5" points="219.12,-36 131.88,-36 131.88,0 219.12,0 219.12,-36"/>
+<text xml:space="preserve" text-anchor="middle" x="175.5" y="-14.3" font-family="Atkinson Hyperlegible Mono" font-size="11.00" fill="var(--dg-ink, #1A1A1A)">stage_orders</text>
 </g>
 <!-- raw_orders&#45;&gt;stage_orders -->
 <g id="edge2" class="edge">
 <title>raw_orders&#45;&gt;stage_orders</title>
-<path fill="none" stroke="#010101" d="M80.86,-18C94.07,-18 109.11,-18 123.21,-18"/>
-<polygon fill="#010101" stroke="#010101" points="122.87,-20.45 129.87,-18 122.87,-15.55 122.87,-20.45"/>
+<path fill="none" stroke="var(--dg-ink, #1A1A1A)" d="M80.86,-18C94.07,-18 109.11,-18 123.21,-18"/>
+<polygon fill="var(--dg-ink, #1A1A1A)" stroke="var(--dg-ink, #1A1A1A)" points="122.87,-20.45 129.87,-18 122.87,-15.55 122.87,-20.45"/>
 </g>
 <!-- box_contents -->
 <g id="node5" class="node">
 <title>box_contents</title>
-<polygon fill="#fefefd" stroke="#010101" stroke-width="1.5" points="357,-70 267.5,-70 267.5,-34 357,-34 357,-70"/>
-<text xml:space="preserve" text-anchor="middle" x="312.25" y="-48.3" font-family="Atkinson Hyperlegible Mono" font-size="11.00" fill="#010101">box_contents</text>
+<polygon fill="var(--dg-card, #FFFFFF)" stroke="var(--dg-ink, #1A1A1A)" stroke-width="1.5" points="357,-70 267.5,-70 267.5,-34 357,-34 357,-70"/>
+<text xml:space="preserve" text-anchor="middle" x="312.25" y="-48.3" font-family="Atkinson Hyperlegible Mono" font-size="11.00" fill="var(--dg-ink, #1A1A1A)">box_contents</text>
 </g>
 <!-- stage_harvest&#45;&gt;box_contents -->
 <g id="edge3" class="edge">
 <title>stage_harvest&#45;&gt;box_contents</title>
-<path fill="none" stroke="#010101" d="M222.87,-74.3C234.5,-71.36 247.06,-68.2 258.95,-65.2"/>
-<polygon fill="#010101" stroke="#010101" points="259.41,-67.61 265.6,-63.52 258.21,-62.86 259.41,-67.61"/>
+<path fill="none" stroke="var(--dg-ink, #1A1A1A)" d="M222.87,-74.3C234.5,-71.36 247.06,-68.2 258.95,-65.2"/>
+<polygon fill="var(--dg-ink, #1A1A1A)" stroke="var(--dg-ink, #1A1A1A)" points="259.41,-67.61 265.6,-63.52 258.21,-62.86 259.41,-67.61"/>
 </g>
 <!-- waste_report -->
 <g id="node7" class="node">
 <title>waste_report</title>
-<polygon fill="#fefefd" stroke="#010101" stroke-width="1.5" points="571.5,-110 483.5,-110 483.5,-74 571.5,-74 571.5,-110"/>
-<text xml:space="preserve" text-anchor="middle" x="527.5" y="-88.3" font-family="Atkinson Hyperlegible Mono" font-size="11.00" fill="#010101">waste_report</text>
+<polygon fill="var(--dg-card, #FFFFFF)" stroke="var(--dg-ink, #1A1A1A)" stroke-width="1.5" points="571.5,-110 483.5,-110 483.5,-74 571.5,-74 571.5,-110"/>
+<text xml:space="preserve" text-anchor="middle" x="527.5" y="-88.3" font-family="Atkinson Hyperlegible Mono" font-size="11.00" fill="var(--dg-ink, #1A1A1A)">waste_report</text>
 </g>
 <!-- stage_harvest&#45;&gt;waste_report -->
 <g id="edge8" class="edge">
 <title>stage_harvest&#45;&gt;waste_report</title>
-<path fill="none" stroke="#010101" d="M222.95,-87.41C230.17,-87.62 237.53,-87.82 244.5,-88 304.27,-89.55 319.21,-90.13 379,-91 410.81,-91.46 446.49,-91.71 474.78,-91.85"/>
-<polygon fill="#010101" stroke="#010101" points="474.41,-94.29 481.42,-91.88 474.43,-89.39 474.41,-94.29"/>
+<path fill="none" stroke="var(--dg-ink, #1A1A1A)" d="M222.95,-87.41C230.17,-87.62 237.53,-87.82 244.5,-88 304.27,-89.55 319.21,-90.13 379,-91 410.81,-91.46 446.49,-91.71 474.78,-91.85"/>
+<polygon fill="var(--dg-ink, #1A1A1A)" stroke="var(--dg-ink, #1A1A1A)" points="474.41,-94.29 481.42,-91.88 474.43,-89.39 474.41,-94.29"/>
 </g>
 <!-- stage_orders&#45;&gt;box_contents -->
 <g id="edge4" class="edge">
 <title>stage_orders&#45;&gt;box_contents</title>
-<path fill="none" stroke="#010101" d="M219.51,-28.85C232.01,-32.01 245.8,-35.49 258.82,-38.77"/>
-<polygon fill="#010101" stroke="#010101" points="257.94,-41.08 265.33,-40.41 259.14,-36.33 257.94,-41.08"/>
+<path fill="none" stroke="var(--dg-ink, #1A1A1A)" d="M219.51,-28.85C232.01,-32.01 245.8,-35.49 258.82,-38.77"/>
+<polygon fill="var(--dg-ink, #1A1A1A)" stroke="var(--dg-ink, #1A1A1A)" points="257.94,-41.08 265.33,-40.41 259.14,-36.33 257.94,-41.08"/>
 </g>
 <!-- route_plan -->
 <g id="node6" class="node">
 <title>route_plan</title>
-<polygon fill="#fefefd" stroke="#010101" stroke-width="1.5" points="564.38,-44 490.62,-44 490.62,-8 564.38,-8 564.38,-44"/>
-<text xml:space="preserve" text-anchor="middle" x="527.5" y="-22.3" font-family="Atkinson Hyperlegible Mono" font-size="11.00" fill="#010101">route_plan</text>
+<polygon fill="var(--dg-card, #FFFFFF)" stroke="var(--dg-ink, #1A1A1A)" stroke-width="1.5" points="564.38,-44 490.62,-44 490.62,-8 564.38,-8 564.38,-44"/>
+<text xml:space="preserve" text-anchor="middle" x="527.5" y="-22.3" font-family="Atkinson Hyperlegible Mono" font-size="11.00" fill="var(--dg-ink, #1A1A1A)">route_plan</text>
 </g>
 <!-- stage_orders&#45;&gt;route_plan -->
 <g id="edge6" class="edge">
 <title>stage_orders&#45;&gt;route_plan</title>
-<path fill="none" stroke="#010101" d="M219.54,-18.94C256.1,-19.74 310,-20.92 357,-22 399.32,-22.97 447.58,-24.11 481.76,-24.93"/>
-<polygon fill="#010101" stroke="#010101" points="481.56,-27.37 488.62,-25.09 481.68,-22.47 481.56,-27.37"/>
+<path fill="none" stroke="var(--dg-ink, #1A1A1A)" d="M219.54,-18.94C256.1,-19.74 310,-20.92 357,-22 399.32,-22.97 447.58,-24.11 481.76,-24.93"/>
+<polygon fill="var(--dg-ink, #1A1A1A)" stroke="var(--dg-ink, #1A1A1A)" points="481.56,-27.37 488.62,-25.09 481.68,-22.47 481.56,-27.37"/>
 </g>
 <!-- box_contents&#45;&gt;route_plan -->
-<g id="edge5" class="edge">
+<g id="edge5" class="edge highlight">
 <title>box_contents&#45;&gt;route_plan</title>
-<path fill="none" stroke="#020202" stroke-width="2" d="M357.46,-46.42C364.66,-45.52 372.03,-44.61 379,-43.75 412.89,-39.58 451.18,-34.98 480.25,-31.51"/>
-<polygon fill="#020202" stroke="#020202" stroke-width="2" points="480.46,-33.95 487.12,-30.68 479.88,-29.08 480.46,-33.95"/>
-<text xml:space="preserve" text-anchor="middle" x="420.25" y="-46.45" font-family="Atkinson Hyperlegible Mono" font-size="9.00" fill="#020202">missing from after</text>
+<path fill="none" stroke="var(--dg-accent, #1B4FA0)" stroke-width="2" d="M357.46,-46.42C364.66,-45.52 372.03,-44.61 379,-43.75 412.89,-39.58 451.18,-34.98 480.25,-31.51"/>
+<polygon fill="var(--dg-accent, #1B4FA0)" stroke="var(--dg-accent, #1B4FA0)" stroke-width="2" points="480.46,-33.95 487.12,-30.68 479.88,-29.08 480.46,-33.95"/>
+<text xml:space="preserve" text-anchor="middle" x="420.25" y="-46.45" font-family="Atkinson Hyperlegible Mono" font-size="9.00" fill="var(--dg-accent, #1B4FA0)">missing from after</text>
 </g>
 <!-- box_contents&#45;&gt;waste_report -->
 <g id="edge7" class="edge">
 <title>box_contents&#45;&gt;waste_report</title>
-<path fill="none" stroke="#010101" d="M357.69,-60.34C391.85,-66.74 439.1,-75.61 474.92,-82.33"/>
-<polygon fill="#010101" stroke="#010101" points="474.02,-84.65 481.36,-83.53 474.93,-79.83 474.02,-84.65"/>
+<path fill="none" stroke="var(--dg-ink, #1A1A1A)" d="M357.69,-60.34C391.85,-66.74 439.1,-75.61 474.92,-82.33"/>
+<polygon fill="var(--dg-ink, #1A1A1A)" stroke="var(--dg-ink, #1A1A1A)" points="474.02,-84.65 481.36,-83.53 474.93,-79.83 474.02,-84.65"/>
 </g>
 </g>
 </svg>
