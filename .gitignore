@@ -11,6 +11,13 @@ hugo_stats.json
 .idea/
 .vscode/
 
+# script/ tooling: playwright-core is installed locally, per script/README.md,
+# and the audits write their screenshots here.
+/node_modules/
+/package.json
+/package-lock.json
+/.screenshots/
+
 # Build output
 _site/
 .sass-cache/
