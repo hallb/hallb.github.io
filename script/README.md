@@ -26,13 +26,22 @@ clean run prints zeroes, which looks the same as a run that measured nothing,
 so `SELFTEST=1` injects known-bad CSS and the run should then fail loudly.
 
 `audit-anti-patterns.js` scores fourteen of the checklist's sixteen rows
-mechanically, adds a sideways-scroll check of its own, and names the two it
-cannot measure: the hero-and-call-to-action row, which needs eyes on the
-render, and diagrams with literal colours, which `audit-figure-colours.py`
-answers. **It is expected to be red on one row** — admonition bodies run 76–81
-characters at 1280px — until
-[open decision #8](../../benhall.ca-planning/docs/02-solution/open-decisions.md)
-is answered. Everything else passes.
+mechanically, adds a sideways-scroll check and a lead measure of its own, and
+names the two it cannot measure: the hero-and-call-to-action row, which needs
+eyes on the render, and diagrams with literal colours, which
+`audit-figure-colours.py` answers. Every row passes.
+
+Its two measure rows gate on the geometry that sets the measure — prose 18px in
+560px at 1280 and 17px in 360px at 400, the admonition column 44px narrower at
+15px — rather than on a cap applied to each line. The 65–75 band is a property
+of the column: ragged-right wrapping in proportional type will occasionally fit
+an extra narrow character whatever the column is, and admonition bodies sit
+outside the band by
+[decision #8](../../benhall.ca-planning/docs/02-solution/open-decisions.md).
+A content edit that wraps long therefore does not trip the check; a change to
+the body size or the measure does. It prints characters per line for prose,
+lead and admonitions on every run either way, so the accepted numbers stay in
+front of whoever runs it.
 
 ## Setup
 
