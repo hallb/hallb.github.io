@@ -68,7 +68,12 @@ diagrams: $(DIAGRAMS)
 
 # CI gate: render, then fail if anything changed. A stale diagram cannot ship
 # without someone noticing.
-check-diagrams: diagrams
+#
+# -B, so this never trusts a timestamp. git does not preserve mtimes, so in a
+# fresh clone every file is checked out in the same second and make is as
+# likely to think a stale SVG is current as not.
+check-diagrams:
+	$(MAKE) -B diagrams
 	@if [[ -n "$$(git status --porcelain -- '*.svg')" ]]; then \
 		echo "Diagrams are out of date. Run 'make diagrams' and commit the result:"; \
 		git status --porcelain -- '*.svg'; \
