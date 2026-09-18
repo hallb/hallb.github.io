@@ -525,8 +525,10 @@ blockquote {
 
 /* Syntax-D: a language the highlighter has no grammar for ships plain, and
    says so with a dashed rule and "not highlighted" in the header row. */
-.code--plain,
-.code--plain .code__head { border-style: dashed; }
+.code--plain { border-style: dashed; }
+/* The head row has only a bottom border. border-style is a four-side
+   shorthand, so setting it here revived the other three at medium width. */
+.code--plain .code__head { border-bottom-style: dashed; }
 
 .scroll-hint {
   display: none;
