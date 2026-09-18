@@ -1,0 +1,25 @@
+{{ define "main" }}
+{{- /* About-A: no byline and no TOC, a lead, the body as markdown, then an
+       Elsewhere line. The lead goes through markdownify so its apostrophes
+       curl like the body's. The Elsewhere links come from front matter because
+       p.inline-links needs aria-hidden separators, which markdown cannot
+       write while raw HTML is off. */ -}}
+<main id="main" class="page page--about">
+<h1 class="title">{{ .Title }}</h1>
+{{- with .Params.lead }}
+<p class="lead">{{ . | markdownify }}</p>
+{{- end }}
+<div class="prose">
+{{ .Content }}
+{{- with .Params.elsewhere }}
+<h2 id="elsewhere">Elsewhere</h2>
+<p class="inline-links">
+  {{- range $i, $link := . -}}
+    {{- if $i }}<span aria-hidden="true">·</span>{{ end -}}
+    <a href="{{ cond (hasPrefix $link.url "/") ($link.url | relURL) $link.url }}">{{ $link.name }}</a>
+  {{- end -}}
+</p>
+{{- end }}
+</div>
+</main>
+{{ end }}

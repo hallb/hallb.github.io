@@ -25,6 +25,8 @@ const targets = [
   // byline and notice are what should line up.
   { name: 'ref-archived', url: `${REF}/archived-post.html` },
   { name: 'gen-archived', url: `${GEN}/post/2013-11-24-barque-smokehouse-shows-estimation-is-hard/` },
+  { name: 'ref-about', url: `${REF}/about.html` },
+  { name: 'gen-about', url: `${GEN}/page/about/` },
 ];
 
 (async () => {
@@ -76,6 +78,10 @@ const targets = [
             photo: box('figure.figure img'),
             notice: box('.notice'),
             archiveList: box('.archive-list'),
+            lead: box('.lead'),
+            inlineLinks: box('.inline-links'),
+            proseH2Font: document.querySelector('.prose h2')
+              ? getComputedStyle(document.querySelector('.prose h2')).fontSize : null,
             tableWrap: box('.table-wrap'),
             toc: box('details.toc'),
             copyButtons: document.querySelectorAll('.code__head .copy').length,
