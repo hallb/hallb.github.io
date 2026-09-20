@@ -16,8 +16,9 @@ worth repeating whenever the templates change.
 | `audit-anti-patterns.js` | Does the built site pass ISS-44's anti-patterns checklist? (ISS-42) |
 
 The two audits are ISS-42's last two acceptance criteria, and they are written
-to be re-run rather than read once. Both take seven page types at 1280px and
-400px in light and dark — 28 frames — and both exit non-zero on a failure.
+to be re-run rather than read once. Both take eight page types at 1280px and
+400px in light and dark — 32 frames — and both exit non-zero on a failure. The
+eighth is `404.html`, which Cloudflare serves for every unknown path (ISS-48).
 
 `audit-a11y.js` measures contrast on rendered colour rather than on the
 stylesheet hexes: every text-bearing element is read back through

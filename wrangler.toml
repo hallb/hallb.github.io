@@ -107,9 +107,9 @@ directory = "./public"
 # Serve Hugo's generated 404.html for unknown paths, rather than the asset
 # store's default, which is quiet and unhelpful.
 #
-# NOTHING GENERATES ONE YET. layouts/ has no 404.html -- the Stack theme used
-# to supply it and ADR 0002 stopped using the theme. ISS-48 adds it. Until then
-# this setting points at a page that does not exist, which fails the way the
-# default does rather than erroring, so it will not announce itself. Verify
-# against the deployed site at ISS-17.
+# layouts/404.html supplies it (ISS-48), replacing the one the Stack theme used
+# to give us before ADR 0002 stopped using the theme. It carries the site's
+# header, footer and dark mode, and a search box, because the reader who lands
+# here usually followed a stale link to a 2013-14 post. Verify against the
+# deployed site at ISS-17.
 not_found_handling = "404-page"

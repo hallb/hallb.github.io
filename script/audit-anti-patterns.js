@@ -31,6 +31,8 @@ const PAGES = [
   { name: 'search', url: `${GEN}/search/?q=requirements` },
   { name: 'docs', url: `${GEN}/docs/crosswalk/` },
   { name: 'archived', url: `${GEN}/post/2013-11-24-barque-smokehouse-shows-estimation-is-hard/` },
+  // Served for every unknown path, so it is a page type like any other (ISS-48).
+  { name: '404', url: `${GEN}/404.html` },
 ];
 
 const VIEWPORTS = [
