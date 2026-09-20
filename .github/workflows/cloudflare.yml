@@ -1,0 +1,170 @@
+name: Cloudflare
+
+# The preview half of ISS-11. A branch push builds the rebuilt site and uploads
+# a Worker *version* with its own URL; nothing is activated and no production
+# traffic moves. Pattern and reasoning from ~/work/tools-portfolio's WORK-42
+# (docs/03-solution/11-qa-and-delivery.md §2.2), which verified it by running it.
+#
+# WHAT IS DELIBERATELY NOT HERE YET, so that a green run is not mistaken for a
+# finished pipeline:
+#
+#   * No production `deploy` job. ISS-11's gate — `needs:` on deploy, so nothing
+#     reaches production unless the checks passed on that exact commit — does not
+#     exist in this file. Until it does, production is still GitHub Pages via
+#     hugo2.yml, and adding a deploy job here without the gate below would give
+#     production a second, ungated door. That is the thing M-2 exists to avoid.
+#   * No link check. ISS-12 (htmltest) is the gate the deploy job will need.
+#     Writing the deploy job before the gate exists is how the gate ends up
+#     being a dashboard setting instead of a line in this file.
+#   * No `--message "<sha> <subject> (run <id>)"`. That labels deployments in
+#     Cloudflare's dashboard and belongs on `wrangler deploy`; a version upload
+#     produces no deployment to label.
+#   * No `make check-diagrams`. It needs Graphviz, Java plus the PlantUML jar,
+#     Python 3 and a headless Chromium whose path the Makefile hard-codes to a
+#     local Playwright cache. The SVGs are committed, so the deploy path does
+#     not need any of it — check-diagrams is a staleness gate, and it belongs in
+#     its own non-gating job when someone wants it.
+#
+# GitHub Pages is untouched: hugo2.yml still builds and deploys `master` to
+# Pages, and Pages is still the origin. This workflow attaches no domains and
+# wrangler.toml declares no `routes` (ISS-50 owns the cutover).
+
+on:
+  push:
+    branches: ["**"]
+
+# Per ref. A newer push to a branch supersedes the older run. `master` does not
+# cancel in flight, for when a deploy job lands here.
+concurrency:
+  group: cloudflare-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+permissions:
+  contents: read
+
+env:
+  # Pinned, because `npx` with no version resolves to whatever is newest on the
+  # day of the build, and these are the two tools in this pipeline most able to
+  # change underneath the site without a commit.
+  #
+  # Hugo 0.159.0 extended. NOT hugo2.yml's 0.128.0, which cannot build this site
+  # at all: the rebuilt layouts use the flat `layouts/` structure introduced in
+  # 0.146 (`layouts/_partials/`, `layouts/_markup/`, `layouts/baseof.html`).
+  # Matches the local toolchain and highlandhideaway.ca — this is ISS-13, and
+  # this `env` is the whole of it.
+  HUGO_VERSION: "0.159.0"
+  WRANGLER_VERSION: "4.135.0"
+
+jobs:
+  # Deliberately a single job, and deliberately NOT behind `needs:` — there is
+  # nothing above it yet, and when there is, a preview still should not wait for
+  # it. A preview is what you look at to judge a branch, and a red suite is when
+  # you most want to see the page. It serves no production traffic, so it is not
+  # a deploy.
+  preview:
+    if: github.ref != 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      # No `submodules:`. themes/stack is still tracked in .gitmodules and is
+      # vestigial — config.toml sets no theme and the rebuilt layouts do not use
+      # it. Checking it out would only slow the run down.
+      - uses: actions/checkout@v4
+
+      # Fail loudly rather than skipping. A deploy that silently does nothing is
+      # indistinguishable from one that worked, and a mistyped secret name
+      # otherwise shows up as a green run that shipped nothing. This step is the
+      # first thing on this repository ever to use these credentials (ISS-15
+      # created them; nothing had authenticated with them), so it is also the
+      # first real test of the token's validity and its Workers Scripts:Edit
+      # scope. Note what it cannot tell you: too narrow a scope fails at the
+      # upload call, not here.
+      - name: Are the Cloudflare credentials present?
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ] || [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID must both be set as repository secrets."
+            exit 1
+          fi
+
+      - name: Install Hugo
+        run: |
+          set -euo pipefail
+          wget -q -O "${{ runner.temp }}/hugo.deb" \
+            "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
+          sudo dpkg -i "${{ runner.temp }}/hugo.deb"
+          hugo version
+
+      # No Dart Sass: the site ships plain CSS in static/, and nothing in
+      # layouts/ or assets/ is SCSS.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # No `cache: npm` and no `npm ci`. .gitignore ignores /package.json,
+      # /package-lock.json and /node_modules/ deliberately (playwright-core is a
+      # local-only tool, script/README.md), so a CI runner sees no package.json
+      # and there is nothing to install or cache. Everything arrives through the
+      # pinned `npx` calls in the Makefile and below.
+
+      # `make site`, not a bare `hugo`. Pagefind writes its index into public/
+      # after Hugo runs, and a bare `hugo` ships a site whose search silently
+      # returns nothing. The Makefile is the one definition of the build; CI
+      # running a different command is how the two drift.
+      #
+      # `make site` is `hugo -D -F`, so this preview INCLUDES drafts and
+      # future-dated content — today that is the lineage-in-the-sql fixture post
+      # (ISS-45/46). That is the point of a preview: without -D the only page
+      # exercising the diagram render hooks, cluster labels and figure
+      # treatments is invisible, and the preview stops showing the work being
+      # previewed. It is also what `make preview` shows locally, so the two
+      # agree. `[operator decision 2026-09-20 — see ISS-11]`
+      #
+      # A production deploy job MUST NOT reuse this target. See ISS-11.
+      #
+      # No --baseURL override is needed, unlike hugo2.yml. Every internal link
+      # and asset in layouts/ goes through relURL, and the built HTML contains no
+      # absolute https://benhall.ca URLs at all [verified 2026-09-20 against a
+      # local build], so the site is self-consistent at whatever host serves it.
+      # Only the RSS feed carries absolute URLs.
+      - name: Build the site
+        run: make site
+
+      # `wrangler versions upload`, not `wrangler deploy`. It "uploads a new
+      # version of your Worker and returns a preview URL for each version
+      # uploaded" and activates nothing, so production is untouched by
+      # construction. --preview-alias pins a stable URL per branch at
+      # <alias>-benhall.<subdomain>.workers.dev. Preview URLs are "enabled by
+      # default when workers_dev is enabled", which is this Worker's state --
+      # wrangler.toml sets neither workers_dev nor preview_urls, and declares no
+      # routes. [developers.cloudflare.com/workers/configuration/previews/,
+      # verified 2026-09-20]
+      #
+      # `npx --yes wrangler@"$WRANGLER_VERSION"`, NOT cloudflare/wrangler-action:
+      # the action defaults to a 3.x wrangler that silently drops [assets] fields
+      # it does not understand, and the failure mode is a warning.
+      - name: Upload a preview version
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          # The alias becomes a DNS label: <alias>-benhall.<subdomain>.workers.dev.
+          # Lower-cased, non-alphanumerics folded to "-", capped well inside the
+          # 63-character limit a label allows.
+          alias=$(printf '%s' "$GITHUB_REF_NAME" \
+            | tr '[:upper:]' '[:lower:]' \
+            | sed 's/[^a-z0-9-]/-/g; s/--*/-/g; s/^-//; s/-*$//' \
+            | cut -c1-40 | sed 's/-*$//')
+          echo "Preview alias: $alias"
+          npx --yes wrangler@"$WRANGLER_VERSION" versions upload \
+            --preview-alias "$alias" 2>&1 | tee upload.log
+          {
+            echo "### Preview"
+            echo
+            echo "Branch \`$GITHUB_REF_NAME\` → alias \`$alias\`"
+            echo
+            echo "Built with \`make site\`, so drafts and future-dated content are included."
+            echo
+            grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev[^ ]*' upload.log | sort -u | sed 's/^/- /'
+          } >> "$GITHUB_STEP_SUMMARY"
