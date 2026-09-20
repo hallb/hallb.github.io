@@ -5,7 +5,7 @@ tags: ["camping", "gear", "biolite", "campstove"]
 image: "/img/biolite-campstove-burns-wood-to-cook-dinner-charge-gadgets-1-300x300.jpg"
 ---
 
-Just got one of these for Fathers' Day: [BioLite CampStove](http://www.biolitestove.com/products/campstove/).
+Just got one of these for Fathers' Day: [BioLite CampStove](https://web.archive.org/web/20150126124550/http://biolitestove.com/products/campstove/).
 
 Five cool things about it:
 

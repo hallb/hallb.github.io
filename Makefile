@@ -106,3 +106,37 @@ site:
 
 preview: site
 	$(PAGEFIND) --site public --serve
+
+
+# ---------- Link check (ISS-12) ----------
+#
+# The gate. ISS-11 wires `make check-links` into cloudflare.yml so the deploy
+# job `needs:` it. Reasoning for what it does and does not check is in
+# .htmltest.yml, which is where someone changing it will be looking.
+#
+#     make check-links           internal links, deterministic and offline
+#     make check-links-external  the same plus external, on demand only
+#
+# Neither builds the site. That is deliberate: the gate must check the bytes
+# that are about to ship, and `make site` builds drafts and future-dated
+# content (-D -F). Wiring a build into this target is how the gate ends up
+# checking something other than what deploys. CI runs the production build,
+# then this.
+
+HTMLTEST := htmltest
+
+.PHONY: check-links check-links-external
+
+# `public/index.html` rather than `public/`: Pagefind and a half-finished
+# build both leave the directory there, and a link check over a stale tree
+# is worse than no link check, because it is green.
+public/index.html:
+	@echo "public/ is not built. Run 'make site' first, or the production" >&2
+	@echo "build target the deploy job uses." >&2
+	@exit 1
+
+check-links: public/index.html
+	$(HTMLTEST) -c .htmltest.yml
+
+check-links-external: public/index.html
+	$(HTMLTEST) -c .htmltest.external.yml

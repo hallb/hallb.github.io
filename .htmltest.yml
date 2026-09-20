@@ -1,0 +1,73 @@
+# The link-check gate for benhall.ca. `[ISS-12]`
+#
+# ISS-11 wires this into .github/workflows/cloudflare.yml so the production
+# deploy job `needs:` it. That `needs:` is the whole point: it makes the gate a
+# line in the repo rather than a branch-protection setting maintained in a
+# dashboard, and it is the last of ADR 0001's three reasons for deploying from
+# Actions instead of Cloudflare's Git integration still standing.
+#
+# Run it with `make check-links`, which checks that public/ is current first.
+
+# htmltest reads the built site, not the content. Hugo writes here, Pagefind
+# writes its index here afterwards, and .gitignore ignores the lot.
+DirectoryPath: "public"
+
+# ---------------------------------------------------------------------------
+# THE GATE DOES NOT CHECK EXTERNAL LINKS. `[decision 2026-09-20, ISS-12]`
+#
+# This is the one substantive choice in this file, and it is one line to
+# reverse, so here is the reasoning rather than the conclusion.
+#
+# A gate should fail on what the commit changed. External link rot fails on
+# what the calendar did: a 2013 post linking to a product that shut down in
+# 2015 turns red on a build that touched nothing, and it does so at whatever
+# moment someone is trying to ship something unrelated. ISS-11 forbids
+# `continue-on-error` and `always()` anywhere above the deploy job, and it is
+# right to — which means a third party's uptime would become a precondition
+# for shipping this site, with no escape hatch by design.
+#
+# That is not hypothetical here. Four of this site's archive links now point at
+# web.archive.org, and web.archive.org returned 503 on one of three consecutive
+# requests while this file was being written `[measured 2026-09-20]`. An
+# external check in the gate would have flaked one deploy in three.
+#
+# External rot is real and still needs watching; it just belongs somewhere that
+# can be amber. ISS-23 (production monitoring: link crawl and dead man's
+# switch) is that place, and crawling the live site is strictly better than
+# crawling public/, because it also sees redirects, the edge 404 and anything
+# the Worker serves that Hugo did not write. Until ISS-23 lands,
+# `make check-links-external` runs the same crawl on demand.
+#
+# To reverse: set this to true and move the IgnoreURLs block below out of its
+# "only matters when external checking is on" status. Everything needed is
+# already here.
+CheckExternal: false
+# ---------------------------------------------------------------------------
+
+# `href="#"` stays a failure. A placeholder link is a broken link, and the
+# footer ships two of them on every page — LinkedIn and "Source for this site"
+# `[ISS-54]`. This check is what makes ISS-54 block the gate rather than being
+# a tidy-up someone gets to later. Do not set this to true to go green.
+IgnoreInternalEmptyHash: false
+
+# Every entry here carries its reason, because the Highland Hideaway config
+# inherited an `^/images/` ignore that turned out to be concealing genuinely
+# missing files, and nobody could tell from the config that it was doing so.
+#
+# Both of these are inert while CheckExternal is false. They are kept so that
+# flipping that flag does not immediately produce two failures that have
+# already been triaged once.
+IgnoreURLs:
+  # Connection hints, not documents. layouts/baseof.html preconnects to both
+  # origins before loading the Atkinson Hyperlegible stylesheet, and a GET on a
+  # bare Google Fonts origin answers 404 — as it should, there is nothing
+  # there. Anchored to the origin with an optional slash, so the real
+  # stylesheet URL under fonts.googleapis.com/css2?... is still checked.
+  - "^https://fonts\\.(googleapis|gstatic)\\.com/?$"
+
+  # The Dizzy, linked from the 2013 Barque Smokehouse post. Answers 403 to
+  # curl, to htmltest and to curl sending a current Chrome user agent
+  # `[checked 2026-09-20]`. A 403 is a server responding, not a dead link: the
+  # host is up and is refusing non-browser clients. Nothing to fix in the post,
+  # and nothing a link checker can do about it.
+  - "^http://thedizzy\\.ca/?$"

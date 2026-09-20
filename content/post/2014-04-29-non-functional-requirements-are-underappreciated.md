@@ -6,7 +6,7 @@ image: "/img/i-proving.png"
 ---
 
 
-_recovered from https://i-proving.com/2014/04/29/non-functional-requirements-are-underappreciated/ via https://web.archive.org_
+_recovered from [i-proving.com](https://web.archive.org/web/20200225204744/http://i-proving.com/2014/04/29/non-functional-requirements-are-underappreciated/) via the Wayback Machine_
 
 When I talk to people about non-functional requirements I often get the following responses:
 

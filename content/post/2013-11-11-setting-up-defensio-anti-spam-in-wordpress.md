@@ -8,7 +8,7 @@ After installing "All in One SEO" pack, getting Google Analytics set up, and reg
 
 ## Defensio Account
 
-- Go to [Defensio Anti-spam](http://www.defensio.com) and set up a new account.
+- Go to [Defensio Anti-spam](https://web.archive.org/web/20140903023523/http://www.defensio.com/) and set up a new account.
 - Click on "My API Keys" and select "Protect another web property".
 - Choose "Protect a Blog or Website".
 - Enter your site's URL and click Submit.
@@ -20,7 +20,7 @@ After installing "All in One SEO" pack, getting Google Analytics set up, and reg
 - Search for "Defensio".
 - Select "Defensio Anti-Spam" and click on "Install Now" and confirm in the dialog.
 - Click on Activate Plugin.
-- You'll see a message that says "**Defensio is not active** because you have not entered your Defensio API key. [Get one right here!](http://defensio.com/signup)" You've already got an API key, so go to the left hand menu. Select Plugins > Defensio Configuration
+- You'll see a message that says "**Defensio is not active** because you have not entered your Defensio API key. [Get one right here!](https://web.archive.org/web/20140825110643/http://www.defensio.com/signup)" You've already got an API key, so go to the left hand menu. Select Plugins > Defensio Configuration
 - Click "Save Settings", leaving all the other options alone.
 - You should get a message saying that your API key is valid.
 
