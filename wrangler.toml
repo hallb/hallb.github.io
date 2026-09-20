@@ -1,0 +1,115 @@
+# Cloudflare project config for benhall.ca.
+#
+# Static assets ship as a Worker via `wrangler deploy` + [assets], not classic
+# Pages + `wrangler pages deploy`. Same pattern as
+# ~/work/tools-portfolio/sites/rural and ~/work/hh/highlandhideaway.ca.
+#
+# No `main`, and no `src/`. ADR 0003 (accepted 2026-09-18, ISS-9) decided this
+# site needs no Worker script: Highland Hideaway's exists only to intercept
+# /go/airbnb and count an outbound booking click, and this site has no
+# outbound conversion to intercept. Cloudflare serves [assets] with no script
+# at all, which is what mindyourground.com already does.
+#
+# Deploys come from GitHub Actions (ISS-49, then ISS-11).
+#
+# Leave Cloudflare's Git integration DISCONNECTED. It deploys on push without
+# waiting for CI, which gives production a second, ungated door -- and it mints
+# its own token: `mindyourground build token` carried KV, R2, D1, Secrets Store,
+# SSL and Certificates, Email Routing Rules and Workers Routes edit across the
+# whole account and all zones [read from the dashboard 2026-09-20, WORK-42].
+# The choice is never "a token versus no token"; it is a broad token held where
+# we cannot see it versus a narrow one we scope ourselves.
+#
+# ---------------------------------------------------------------------------
+# Dashboard configuration required.
+#
+# This list exists because configuration that lives only in the dashboard is
+# invisible to code review, and highlandhideaway.ca lost a Redirect Rule
+# exactly that way. Add to it rather than relying on memory.
+#
+#   Custom domains   (Workers & Pages -> this Worker -> Settings -> Domains)
+#       benhall.ca and www.benhall.ca, BOTH attached. `[ISS-50]`
+#
+#       Attached here rather than declared in `routes` below, deliberately,
+#       and this is the one place benhall.ca diverges from highlandhideaway.ca.
+#       A deploy that adds, updates or removes a Custom Domain needs more than
+#       the token this repo holds: "After a Route or Custom Domain is
+#       configured, you can deploy new Worker versions with only Editor access,
+#       as long as the deployment does not add, update, or remove that
+#       connection" [verified 2026-09-18,
+#       developers.cloudflare.com/workers/authorization/workers/]. Declaring
+#       them here would make the first deploy an add, and it would fail at the
+#       cutover with a token that is correct for every other purpose.
+#       mindyourground.com solves it the same way: no routes, domains clicked
+#       in once, narrow token verified by use `[WORK-42, 2026-09-20]`.
+#
+#       www must stay attached even though the apex serves the site. It has to
+#       resolve to Cloudflare for the www -> apex Redirect Rule to fire at the
+#       edge; detach it and www stops resolving, and the redirect dies with it.
+#
+#   Build/deploy     (Workers & Pages -> this Worker -> Settings)
+#       none. Actions deploys. Do not connect the repository.
+#
+#   Redirect Rule    (Rules -> Redirect Rules)                      `[ISS-14]`
+#       "Redirect from WWW to root [Template]": wildcard https://www.* ->
+#       https://${1}, 301, preserve query string. ALSO required: SSL/TLS ->
+#       Edge Certificates -> "Always Use HTTPS". The rule's pattern matches
+#       https:// only, so plain http://www never reaches it without that
+#       upgrade first. Both are one-time clicks and neither is visible here.
+#
+#   SSL/TLS mode     (SSL/TLS -> Overview)                          `[ISS-50]`
+#       Set to Full (strict). Never set explicitly on this zone; it is on
+#       whatever it defaulted to. It could not be observed while the records
+#       were grey-clouded, because Cloudflare never terminated TLS -- the
+#       HTTPS on benhall.ca today is GitHub's. Carried from ISS-8 to ISS-50,
+#       which is where Cloudflare enters the request path and it starts to
+#       matter.
+#
+#   Web Analytics    (Analytics -> Web analytics)                   `[ISS-20]`
+#       Not enabled yet, and it cannot be until ISS-50 puts Cloudflare in the
+#       request path -- edge injection needs the proxy on, and the records are
+#       grey-clouded today. When it is enabled, use edge injection and add no
+#       beacon to the templates: a second beacon double-counts.
+#
+# ---------------------------------------------------------------------------
+# Credentials. Two narrow tokens, never one shared token, so that revoking
+# either leaves the other path working.
+#
+#   GitHub Actions   repository secrets CLOUDFLARE_API_TOKEN and
+#                    CLOUDFLARE_ACCOUNT_ID on hallb/hallb.github.io, created
+#                    2026-09-20 (ISS-15). Scoped Account | Workers Scripts |
+#                    Edit and nothing else. Do not widen it for analytics --
+#                    Account Analytics: Read is a separate scope and ended up
+#                    a separate token at Highland Hideaway, because the deploy
+#                    token 403s against the analytics APIs.
+#   Laptop           break-glass, below. A separate token, not this one.
+#
+# There is no documented way to scope an API token to a single Worker, so the
+# Actions token can edit any Worker on this account, including highlandhideaway
+# and mindyourground. `[UNVERIFIED 2026-09-20 -- searched, not found]`
+#
+# Break-glass local deploy, from the repo root:
+#   make site && npx wrangler deploy
+# `make site` rather than bare `hugo`, because Pagefind's index is written into
+# public/ after Hugo runs and a bare `hugo` ships a site whose search silently
+# returns nothing.
+# ---------------------------------------------------------------------------
+
+name = "benhall"
+compatibility_date = "2026-09-20"
+
+# No `routes`. See "Custom domains" above -- they are attached in the dashboard
+# so that this repo's token never has to carry Workers Routes edit.
+
+[assets]
+directory = "./public"
+
+# Serve Hugo's generated 404.html for unknown paths, rather than the asset
+# store's default, which is quiet and unhelpful.
+#
+# NOTHING GENERATES ONE YET. layouts/ has no 404.html -- the Stack theme used
+# to supply it and ADR 0002 stopped using the theme. ISS-48 adds it. Until then
+# this setting points at a page that does not exist, which fails the way the
+# default does rather than erroring, so it will not announce itself. Verify
+# against the deployed site at ISS-17.
+not_found_handling = "404-page"
