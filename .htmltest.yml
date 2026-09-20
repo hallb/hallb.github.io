@@ -65,6 +65,15 @@ IgnoreURLs:
   # stylesheet URL under fonts.googleapis.com/css2?... is still checked.
   - "^https://fonts\\.(googleapis|gstatic)\\.com/?$"
 
+  # LinkedIn. Answers HTTP 999 to everything unauthenticated -- curl, htmltest
+  # and a current Chrome user agent alike `[checked 2026-09-20]`. 999 is not a
+  # real status code; it is LinkedIn's standard refusal of clients it cannot
+  # identify as a logged-in browser. It says nothing about whether the profile
+  # exists, which means this particular link can never be verified
+  # mechanically and has to be checked by opening it. The footer puts it on
+  # every page, so without this one entry an external run is all noise.
+  - "^https://www\\.linkedin\\.com/"
+
   # The Dizzy, linked from the 2013 Barque Smokehouse post. Answers 403 to
   # curl, to htmltest and to curl sending a current Chrome user agent
   # `[checked 2026-09-20]`. A 403 is a server responding, not a dead link: the

@@ -17,6 +17,7 @@ IgnoreInternalEmptyHash: false
 IgnoreURLs:
   - "^https://fonts\\.(googleapis|gstatic)\\.com/?$"
   - "^http://thedizzy\\.ca/?$"
+  - "^https://www\\.linkedin\\.com/"
 
 # web.archive.org rate-limits, and four archive posts link to it. Without this
 # a clean run is a matter of luck: one of three consecutive requests answered
