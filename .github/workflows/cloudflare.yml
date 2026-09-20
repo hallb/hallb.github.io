@@ -157,8 +157,14 @@ jobs:
             | sed 's/[^a-z0-9-]/-/g; s/--*/-/g; s/^-//; s/-*$//' \
             | cut -c1-40 | sed 's/-*$//')
           echo "Preview alias: $alias"
-          npx --yes wrangler@"$WRANGLER_VERSION" versions upload \
-            --preview-alias "$alias" 2>&1 | tee upload.log
+          # TEMPORARY, REVERTED IN THE NEXT COMMIT. `versions upload` refuses on a
+          # Worker that does not exist yet -- "You cannot upload a new version of a
+          # Worker that does not yet exist. Please run the `deploy` command first"
+          # [run 35525356348, 2026-09-20]. This one run creates `benhall`. It
+          # attaches no domain and changes no DNS: wrangler.toml declares no
+          # routes, so the Worker exists only at benhall.<subdomain>.workers.dev
+          # and GitHub Pages is still the origin for benhall.ca.
+          npx --yes wrangler@"$WRANGLER_VERSION" deploy 2>&1 | tee upload.log
           {
             echo "### Preview"
             echo
