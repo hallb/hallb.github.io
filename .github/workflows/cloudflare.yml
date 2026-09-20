@@ -47,12 +47,26 @@ env:
   # day of the build, and these are the two tools in this pipeline most able to
   # change underneath the site without a commit.
   #
-  # Hugo 0.159.0 extended. NOT hugo2.yml's 0.128.0, which cannot build this site
-  # at all: the rebuilt layouts use the flat `layouts/` structure introduced in
-  # 0.146 (`layouts/_partials/`, `layouts/_markup/`, `layouts/baseof.html`).
-  # Matches the local toolchain and highlandhideaway.ca — this is ISS-13, and
-  # this `env` is the whole of it.
-  HUGO_VERSION: "0.159.0"
+  # Hugo 0.166.0 extended, the latest release (2026-09-09). NOT hugo2.yml's
+  # 0.128.0, which cannot build this site at all: the rebuilt layouts use the
+  # flat `layouts/` structure introduced in 0.146 (`layouts/_partials/`,
+  # `layouts/_markup/`, `layouts/baseof.html`). This is ISS-13, and this `env`
+  # is the whole of it.
+  #
+  # `[moved forward from 0.159.0 on 2026-09-20, Ben's call]` Verified rather
+  # than assumed: every HTML file in a production build is byte-identical
+  # across the two versions except the `<meta name="generator">` tag. The RSS
+  # feeds reindent, because Hugo's embedded template changed, and one taxonomy
+  # term title casing improves ("Software-Development" -> "Software
+  # Development"). 0.166.0 also deprecates `site.LanguageCode`, which
+  # `layouts/baseof.html` used; it now calls `site.Language.Locale` and renders
+  # the same value.
+  #
+  # This no longer matches highlandhideaway.ca, which is on 0.159.0. That is a
+  # deliberate divergence, not drift: the two sites share no templates. What
+  # must not diverge is this pin and the laptop, which is why the local
+  # toolchain moved in the same change.
+  HUGO_VERSION: "0.166.0"
   WRANGLER_VERSION: "4.135.0"
 
 jobs:

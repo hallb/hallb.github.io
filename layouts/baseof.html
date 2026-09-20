@@ -1,5 +1,7 @@
 <!doctype html>
-<html lang="{{ site.LanguageCode | default "en-CA" }}">
+{{- /* site.LanguageCode was deprecated in Hugo 0.158; site.Language.Locale
+      replaces it and renders the same value from config.toml's languageCode. */ -}}
+<html lang="{{ site.Language.Locale | default "en-CA" }}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
