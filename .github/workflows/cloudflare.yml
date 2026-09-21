@@ -41,6 +41,40 @@ name: Cloudflare
 #     calendar did, and `continue-on-error` is forbidden above `deploy`. The
 #     on-demand crawl is `make check-links-external`; ISS-23 owns it properly.
 #
+#   * No `make check-diagrams` job. This was BUILT AND REMOVED on 2026-09-20
+#     rather than skipped on a guess, and the measurements are worth keeping
+#     because the obvious next move is to try it again. `[run 35553419891]`
+#
+#     check-diagrams re-renders every source and fails if a committed SVG
+#     changed by a single byte. That makes it a comparison against one laptop's
+#     renderer stack, and all three renderers fail to reproduce elsewhere:
+#
+#       graphviz    ubuntu-latest ships 2.43.0; the laptop has 14.1.2. Measured
+#                   under both: different canvas (600pt vs 604pt), different
+#                   node coordinates, and 2.43 omits xml:space="preserve". A
+#                   pinned `container: ubuntu:26.04` DOES reproduce it exactly.
+#       plantuml    identical version (1.2020.02) on both, and the geometry is
+#                   byte-identical -- every coordinate and textLength matches.
+#                   What differs is PlantUML's trailing metadata comment: the
+#                   build date rendered in the machine's timezone (EST vs UTC),
+#                   the JVM's locale (`Country: null` vs `Country: US`), and
+#                   the MD5 computed over them. So a committed SVG encodes the
+#                   timezone and locale of whoever last rendered it.
+#       chromium    unpinnable as things stand. The Makefile's CHROMIUM default
+#                   names playwright's chromium-1234; `playwright@1.63.0
+#                   install` -- the version the laptop has -- lays down
+#                   chromium-1243. mermaid-cli renders text, so a different
+#                   Chromium and a different font set both move the bytes.
+#
+#     Two of the three are fixable by pinning the environment harder. The
+#     plantuml one is not, and should not be: a render whose output depends on
+#     the renderer's timezone is not reproducible, and pinning TZ and LANG in
+#     CI would hide that rather than fix it. The fix belongs in the diagram
+#     pipeline -- strip PlantUML's metadata footer in diagrams/theme-svg.py,
+#     the way the pipeline already strips other things -- and that is ISS-57,
+#     not this issue. Until then check-diagrams is a local pre-commit check,
+#     which is where it has always actually been run.
+#
 # WHAT "PRODUCTION" MEANS TODAY, WHICH IS NOT YET benhall.ca. hugo2.yml still
 # builds and deploys `master` to GitHub Pages, and Pages is still the origin the
 # apex resolves to. This workflow attaches no domains and wrangler.toml declares
@@ -98,11 +132,6 @@ env:
   # link is a link checker that can turn this gate red on a commit that touched
   # no links.
   HTMLTEST_VERSION: "0.17.0"
-
-  # Only the diagrams job uses this. playwright-core 1.63.0 is what the laptop
-  # has, and its chromium build is the one the Makefile's CHROMIUM default
-  # points at -- see that job for why matching it exactly is the whole problem.
-  PLAYWRIGHT_VERSION: "1.63.0"
 
 jobs:
   # Deliberately NOT behind `needs:`, now that there is something it could wait
@@ -386,66 +415,3 @@ jobs:
             echo
             grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev[^ ]*' deploy.log | sort -u | sed 's/^/- /' || true
           } >> "$GITHUB_STEP_SUMMARY"
-
-  # ---------------------------------------------------------------------------
-  # NON-GATING. Nothing declares `needs: diagrams`, so this job cannot block a
-  # deploy however red it goes -- which is the point, and is different from
-  # `continue-on-error`. A stale diagram should be visible in the run's colour;
-  # it just should not stop a link-clean site from shipping.
-  #
-  # WHAT IT ACTUALLY CHECKS, and why it is harder than it looks. check-diagrams
-  # re-renders every source with -B and fails if a committed SVG changed, so it
-  # is a byte comparison against a render produced on the laptop. Every renderer
-  # in the chain therefore has to match the laptop's, or this job goes red on a
-  # commit that touched nothing:
-  #
-  #   graphviz   apt, and the runner's version is whatever ubuntu-latest ships
-  #   plantuml   apt, same
-  #   chromium   pinned exactly, via playwright 1.63.0 -- the laptop's version,
-  #              which puts its build at the Makefile's CHROMIUM default path so
-  #              no override is needed
-  #   mermaid-cli pinned in the Makefile (MERMAID_CLI_VERSION)
-  #
-  # The two apt packages are the unpinned pair and the likeliest source of a
-  # false red. `[UNVERIFIED before the first run of this job -- the laptop is
-  # Ubuntu 26.04 with graphviz 14.1.2 and plantuml 1.2020.02, and ubuntu-latest
-  # is 24.04. If this job is red on renderer drift rather than on a stale SVG,
-  # the answer is a pinned container, not an ignore.]`
-  #
-  # All three diagram sources live in the lineage-in-the-sql fixture, which never
-  # ships to production. The check still earns its place: the fixture is what the
-  # preview exists to show, and a stale render there is a misleading preview.
-  diagrams:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install the renderers
-        run: |
-          set -euo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends graphviz plantuml
-          dot -V
-          plantuml -version | head -1
-          python3 --version
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      # Playwright's chromium, at the version the laptop has, installed to the
-      # default ~/.cache/ms-playwright path the Makefile's CHROMIUM already
-      # points at. mermaid-cli's own puppeteer would download a different build
-      # and render different bytes.
-      - name: Install the pinned Chromium
-        run: npx --yes playwright@"$PLAYWRIGHT_VERSION" install --with-deps chromium
-
-      # check-diagrams ends in `git status --porcelain -- '*.svg'`, so it needs a
-      # git repo it trusts. The checkout is owned by the runner user here, but
-      # this costs nothing and removes one way for the check to report "clean"
-      # because git refused to look.
-      - name: Re-render every diagram and diff
-        run: |
-          set -euo pipefail
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          make check-diagrams

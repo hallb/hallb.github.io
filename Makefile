@@ -40,17 +40,22 @@ DIAGRAMS := $(DOT_SRC:.dot=.svg) $(PUML_SRC:.puml=.svg) $(MMD_SRC:.mmd=.svg)
 # machine, so Puppeteer is told not to download its own.
 #
 # CHROMIUM is its own variable so a caller can point it somewhere else without
-# restating the rest of this line -- which matters because the default is a
-# path that exists on exactly one machine. cloudflare.yml's diagrams job
-# overrides it with the runner's Chrome. `[ISS-11, 2026-09-20]` Restating the
-# whole of MMDC to override the path would drop the version pin the moment
-# someone got the quoting slightly wrong, and it would do it silently.
+# restating the rest of this line, which would drop the version pin below the
+# moment someone got the quoting slightly wrong. `[ISS-11, 2026-09-20]`
+#
+# The default is a path that exists on exactly one machine, and that is the
+# unsolved part of running check-diagrams anywhere else. `playwright@1.63.0
+# install` -- the version this repo's package.json asks for -- lays down
+# chromium-1243, not the 1234 named here, so even the laptop's own pin cannot
+# be reproduced from the version number. cloudflare.yml's header records the
+# full measurement and ISS-57 owns fixing it.
 CHROMIUM := $(HOME)/.cache/ms-playwright/chromium-1234/chrome-linux64/chrome
 
 # Pinned for the same reason as Hugo, Pagefind and wrangler: `npx` with no
 # version resolves to whatever is newest on the day of the build, and a
 # mermaid-cli that renders one pixel differently turns check-diagrams red on a
-# commit that touched nothing. `[ISS-11]`
+# commit that touched nothing. `[ISS-11]` Necessary but not sufficient -- the
+# pin does not reach the Chromium mermaid-cli drives. See CHROMIUM above.
 MERMAID_CLI_VERSION := 11.17.0
 
 MMDC := PUPPETEER_SKIP_DOWNLOAD=1 \
