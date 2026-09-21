@@ -8,6 +8,44 @@
 <title>{{ block "title" . }}{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · Ben Hall{{ end }}{{ end }}</title>
 <meta name="color-scheme" content="light dark">
 {{ with .Params.summary }}<meta name="description" content="{{ . }}">{{ end }}
+{{- /* The canonical host. `[ISS-14]`
+
+      This is the ONE absolute URL in the built HTML. Everything else in
+      layouts/ goes through relURL, deliberately, so the site is self-consistent
+      at whatever host serves it -- the workers.dev preview, a local `make
+      preview`, or benhall.ca. A canonical tag cannot work that way: naming the
+      host is the whole job. It resolves through config.toml's baseURL, which is
+      the apex, and the apex is what the sitemap names and what `www` redirects
+      to at the edge.
+
+      The Stack theme emitted this and the 2026-09 rebuild dropped it, which is
+      how ISS-14 found it. It also earns its keep on the preview: the bare
+      https://benhall.benedict-hall.workers.dev serves this site publicly with
+      no noindex header, and a canonical pointing at the apex is what tells a
+      crawler which copy counts. `[M-2 log, 2026-09-20]`
+
+      Every page but the 404 gets one. Cloudflare serves /404.html for every
+      address it cannot find (`not_found_handling = "404-page"`), so a
+      self-referencing canonical there would claim /404.html is the canonical
+      URL of whatever the reader actually asked for. The response is a 404 and
+      nothing under it should be indexed: emitting no canonical says that,
+      emitting one says something false. See layouts/404.html.
+
+      Written as a condition here rather than as a `block` overridden by
+      `{{ define "canonical" }}{{ end }}` in 404.html. That was tried first and
+      silently did nothing -- it parsed, raised no error, and left the canonical
+      tag in place. Go's template package refuses to replace an existing
+      definition with an empty one (text/template `associate`, guarded by
+      `parse.IsEmptyTree`). Measured both ways on 2026-09-20: an empty `define`
+      leaves the canonical on /404.html, the same `define` with any content in
+      it removes it.
+
+      So the block form works only if the override has a body, and a body that
+      renders nothing visible is the obvious thing to reach for -- which is a
+      worse trap than the one it solves, because the next person to tidy it
+      away gets no error either. A condition keyed on `.Kind` has one place to
+      read and nothing to delete by accident. */ -}}
+{{ if ne .Kind "404" }}<link rel="canonical" href="{{ .Permalink }}">{{ end }}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&amp;family=Atkinson+Hyperlegible+Mono:wght@400;500;600&amp;display=swap">

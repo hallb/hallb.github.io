@@ -137,10 +137,19 @@ jobs:
       # A production deploy job MUST NOT reuse this target. See ISS-11.
       #
       # No --baseURL override is needed, unlike hugo2.yml. Every internal link
-      # and asset in layouts/ goes through relURL, and the built HTML contains no
-      # absolute https://benhall.ca URLs at all [verified 2026-09-20 against a
-      # local build], so the site is self-consistent at whatever host serves it.
-      # Only the RSS feed carries absolute URLs.
+      # and asset in layouts/ goes through relURL, so the site is
+      # self-consistent at whatever host serves it.
+      #
+      # `[amended 2026-09-20 -- ISS-14]` This used to add "and the built HTML
+      # contains no absolute https://benhall.ca URLs at all". That is no longer
+      # true and should not be restored: ISS-14 added the one deliberate
+      # exception, `<link rel="canonical">` in layouts/baseof.html, which names
+      # the apex by design because naming the host is what a canonical tag is
+      # for. The reason above survives it -- links and assets still resolve
+      # against the serving host, so the preview still works as a preview, and
+      # the canonical is what keeps a crawler from treating the workers.dev copy
+      # as the real site. Absolute URLs otherwise appear only in the RSS feed
+      # and sitemap.xml, both of which come from baseURL.
       - name: Build the site
         run: make site
 

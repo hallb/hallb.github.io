@@ -57,6 +57,32 @@
 #       https:// only, so plain http://www never reaches it without that
 #       upgrade first. Both are one-time clicks and neither is visible here.
 #
+#       THE BEHAVIOUR IT HAS TO REPRODUCE, measured against GitHub Pages on
+#       2026-09-20 while Pages was still the origin, so that "same as before"
+#       is a fact rather than a memory `[ISS-14]`:
+#
+#         https://www.benhall.ca/post/<slug>/?x=1
+#             -> 301 https://benhall.ca/post/<slug>/?x=1
+#         https://www.benhall.ca/foo/bar?q=2   (a path that 404s)
+#             -> 301 https://benhall.ca/foo/bar?q=2   (redirect first, 404 after)
+#         http://www.benhall.ca/foo?q=2
+#             -> 301 https://benhall.ca/foo?q=2
+#
+#       Path and query survive in every case, and an unknown path redirects
+#       before it 404s rather than 404ing on www.
+#
+#       ONE ACCEPTED DIFFERENCE. Pages does the last of those in a single hop.
+#       Cloudflare will likely take two -- "Always Use HTTPS" upgrades the
+#       scheme, then the rule strips www -- because the template's pattern is
+#       https-only. Two 301s pass the same query and land on the same URL, so
+#       this is cosmetic, and it is written down here so that ISS-17 records a
+#       hop count instead of treating it as a regression. Collapsing it to one
+#       hop needs a custom Single Redirect keyed on `http.host` rather than the
+#       template; not worth doing unless the hop shows up in something that
+#       matters. `[UNVERIFIED -- Cloudflare's phase ordering for Always Use
+#       HTTPS versus dynamic redirects was not confirmed, and cannot be until
+#       www resolves to Cloudflare at ISS-50]`
+#
 #   SSL/TLS mode     (SSL/TLS -> Overview)                          `[ISS-50]`
 #       Set to Full (strict). Never set explicitly on this zone; it is on
 #       whatever it defaulted to. It could not be observed while the records

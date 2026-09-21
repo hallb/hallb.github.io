@@ -11,6 +11,11 @@
        here has to be root-relative rather than relative to the page.
        relURL gives that, because baseURL has no sub-path.
 
+       The same fact is why this page carries no <link rel="canonical"> while
+       every other page does: a self-referencing canonical would name
+       /404.html as the canonical URL of whatever was actually requested.
+       layouts/baseof.html excludes `.Kind` "404" and explains it. `[ISS-14]`
+
        It carries search (ISS-48): a reader lands here from a stale link, and
        the posts those links point at are all still on the site. The markup is
        Search-A's, so search.js drives it with no change and no new CSS --
