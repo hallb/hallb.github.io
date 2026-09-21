@@ -115,10 +115,28 @@
 # and mindyourground. `[UNVERIFIED 2026-09-20 -- searched, not found]`
 #
 # Break-glass local deploy, from the repo root:
-#   make site && npx wrangler deploy
-# `make site` rather than bare `hugo`, because Pagefind's index is written into
-# public/ after Hugo runs and a bare `hugo` ships a site whose search silently
-# returns nothing.
+#   make site-prod && npx wrangler deploy
+#
+# `site-prod`, NOT `site`. `[corrected 2026-09-20, ISS-11]` This line said
+# `make site` until the production half of ISS-11 landed, and `make site` is
+# `hugo -D -F`: it builds the lineage-in-the-sql fixture post, whose own front
+# matter says "Test fixture for the Hugo templates. Never publish." Typing the
+# old command here would have published it to benhall.ca. The whole reason the
+# production build is a Makefile target rather than a flag on the CI command is
+# this line -- break-glass is used in a hurry, from memory, on the day something
+# is already wrong, and it has to be the safe command by default.
+#
+# A target rather than bare `hugo` for a second reason too: Pagefind's index is
+# written into public/ after Hugo runs, and a bare `hugo` ships a site whose
+# search silently returns nothing. site-prod ends in the same Pagefind call the
+# preview build does.
+#
+# What this skips, knowingly, because that is what break-glass means: the link
+# check. Normal deploys go through .github/workflows/cloudflare.yml, where the
+# `deploy` job declares `needs: check` and cannot run unless htmltest passed.
+# Running the two commands above puts a tree on production that nothing gated.
+# `make check-links` after `make site-prod` and before the deploy costs seconds
+# and restores the gate by hand.
 # ---------------------------------------------------------------------------
 
 name = "benhall"
