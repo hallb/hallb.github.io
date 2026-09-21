@@ -1,6 +1,9 @@
 # Basic site configuration
 baseURL = "https://benhall.ca/"
-languageCode = "en-us"
+# `locale`, not `languageCode`, which was deprecated in Hugo 0.158 and warns on
+# every build. Output is byte-identical: <html lang> and the RSS <language>.
+locale = "en-us"
+defaultContentLanguage = "en"
 title = "BenHall.ca"
 
 # No theme. ISS-46 builds the design-system reference from layouts/ directly;
@@ -16,7 +19,6 @@ enableEmoji = true
 home = ["HTML", "RSS"]
 page = ["HTML"]
 section = ["HTML", "RSS"]
-taxonomy = ["HTML"]
 
 # Chroma emits classes rather than inline styles, mapped in chroma-map.css.
 # See docs/02-solution/syntax-highlighting.md in the planning repo.
@@ -33,16 +35,28 @@ ordered = true
 # An image alone in a paragraph reaches the image hook as a block (.IsBlock),
 # not wrapped in <p>. Both figure treatments emit <figure>, which is invalid
 # inside <p>: the browser closes the paragraph early and leaves an empty one.
+#
+# DO NOT REMOVE THIS, and do not trust `hugo config` about it: the resolved
+# config does not list this key, which reads exactly like a setting Hugo has
+# dropped. It has not. Removing it was tried on 2026-09-20 and the archive
+# posts' standalone images went straight back to `<p><img></p>` with no
+# <figure> and no <figcaption>. The dump is silent about it; the built output
+# is not.
+#
+# Nothing top-level belongs below this header. TOML would read it as a key of
+# this table and Hugo would drop it without a word, which is what happened to
+# defaultContentLanguage -- now at the top of this file -- until 2026-09-20.
 [markup.goldmark.parser]
 wrapStandAloneImageWithinParagraph = false
 
-# Default language
-defaultContentLanguage = "en"
-
-# Configure taxonomies
+# No taxonomies (ISS-52). The table is present and EMPTY on purpose: `tags` and
+# `categories` are Hugo's built-in defaults, so deleting this block would
+# restore them. Nothing in layouts/ renders a tag -- not the byline, not the
+# archive, not search -- so the only thing the taxonomy produced was 24 URLs in
+# the sitemap with no HTML behind them and a `found no layout file` warning on
+# every build. The tags stay in each post's front matter, so this is reversible
+# the moment ISS-5 decides tags are real and something renders them.
 [taxonomies]
-tag = "tags"
-category = "categories"
 
 # Configure menu
 [[menu.main]]
