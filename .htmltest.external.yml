@@ -1,0 +1,25 @@
+# The on-demand external link crawl. NOT wired into CI, deliberately — see the
+# long comment in .htmltest.yml for why external checking is not in the deploy
+# gate. Run it with `make check-links-external`.
+#
+# This exists so the capability is not lost while ISS-23 (production
+# monitoring: link crawl and dead man's switch) is still in the backlog. When
+# ISS-23 lands it crawls the live site, which sees redirects, the edge 404 and
+# anything the Worker serves that Hugo did not write — strictly more than this
+# does. Delete this file then.
+
+DirectoryPath: "public"
+CheckExternal: true
+IgnoreInternalEmptyHash: false
+
+# Kept identical to .htmltest.yml's block so the two cannot drift apart
+# silently. The reasons are written out there.
+IgnoreURLs:
+  - "^https://fonts\\.(googleapis|gstatic)\\.com/?$"
+  - "^http://thedizzy\\.ca/?$"
+  - "^https://www\\.linkedin\\.com/"
+
+# web.archive.org rate-limits, and four archive posts link to it. Without this
+# a clean run is a matter of luck: one of three consecutive requests answered
+# 503 on 2026-09-20. A retry is the right tool, not an ignore.
+ExternalTimeout: 30

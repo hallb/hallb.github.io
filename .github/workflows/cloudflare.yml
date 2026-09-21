@@ -1,0 +1,421 @@
+name: Cloudflare
+
+# ISS-11, both halves. A branch push builds the site twice -- once with the
+# fixtures in, for a preview Worker version with its own URL, and once as
+# production, for the link check -- and a push to `master` deploys the
+# production build to the benhall Worker. Pattern and reasoning from
+# ~/work/tools-portfolio's WORK-42 (docs/03-solution/11-qa-and-delivery.md
+# §2.2), which verified it by running it.
+#
+# THE GATE, which is what this file exists for. `deploy` declares `needs: check`,
+# so production is unreachable unless htmltest passed on that exact commit. That
+# `needs:` is a line in this repository rather than a branch-protection setting
+# maintained in a dashboard, and it is the last of ADR 0001's three reasons for
+# deploying from Actions instead of Cloudflare's Git integration still standing
+# after ADR 0002 dropped the theme.
+#
+# `check` carries no job-level `if:` on purpose. GitHub skips every job that
+# needs a skipped job, so an `if:` added here would skip `deploy` too. That
+# fails in the safe direction -- nothing deploys -- but it fails silently, and
+# the run goes green. `[verified 2026-09-18, docs.github.com]` No `always()` and
+# no `continue-on-error` anywhere above `deploy`.
+#
+# `check` also runs on every branch, not only on `master`. Merges here happen on
+# the laptop and there is no pull request anywhere in this, so a branch push is
+# the only moment the gate can speak before the merge. It still does not
+# authorise the deploy: a local merge can produce a commit whose tree was never
+# built anywhere, which is why `master` re-runs the whole thing on the merge
+# result rather than trusting the branch's green run.
+#
+# ONE BUILD REACHES PRODUCTION, AND THE GATE READ ITS BYTES. `check` uploads its
+# public/ as an artifact and `deploy` downloads it, rather than rebuilding. Two
+# builds of one commit ought to be identical, and "ought to" is the wrong
+# standard for the one question this gate answers. The tree htmltest read is the
+# tree wrangler uploads.
+#
+# STILL NOT HERE, deliberately:
+#
+#   * No `--baseURL` override, unlike hugo2.yml. See the build step.
+#   * No external link checking in the gate. `.htmltest.yml` has the reasoning
+#     at length: a gate should fail on what the commit changed, not on what the
+#     calendar did, and `continue-on-error` is forbidden above `deploy`. The
+#     on-demand crawl is `make check-links-external`; ISS-23 owns it properly.
+#
+#   * No `make check-diagrams` job. This was BUILT AND REMOVED on 2026-09-20
+#     rather than skipped on a guess, and the measurements are worth keeping
+#     because the obvious next move is to try it again. `[run 35553419891]`
+#
+#     check-diagrams re-renders every source and fails if a committed SVG
+#     changed by a single byte. That makes it a comparison against one laptop's
+#     renderer stack, and all three renderers fail to reproduce elsewhere:
+#
+#       graphviz    ubuntu-latest ships 2.43.0; the laptop has 14.1.2. Measured
+#                   under both: different canvas (600pt vs 604pt), different
+#                   node coordinates, and 2.43 omits xml:space="preserve". A
+#                   pinned `container: ubuntu:26.04` DOES reproduce it exactly.
+#       plantuml    identical version (1.2020.02) on both, and the geometry is
+#                   byte-identical -- every coordinate and textLength matches.
+#                   What differs is PlantUML's trailing metadata comment: the
+#                   build date rendered in the machine's timezone (EST vs UTC),
+#                   the JVM's locale (`Country: null` vs `Country: US`), and
+#                   the MD5 computed over them. So a committed SVG encodes the
+#                   timezone and locale of whoever last rendered it.
+#       chromium    unpinnable as things stand. The Makefile's CHROMIUM default
+#                   names playwright's chromium-1234; `playwright@1.63.0
+#                   install` -- the version the laptop has -- lays down
+#                   chromium-1243. mermaid-cli renders text, so a different
+#                   Chromium and a different font set both move the bytes.
+#
+#     Two of the three are fixable by pinning the environment harder. The
+#     plantuml one is not, and should not be: a render whose output depends on
+#     the renderer's timezone is not reproducible, and pinning TZ and LANG in
+#     CI would hide that rather than fix it. The fix belongs in the diagram
+#     pipeline -- strip PlantUML's metadata footer in diagrams/theme-svg.py,
+#     the way the pipeline already strips other things -- and that is ISS-57,
+#     not this issue. Until then check-diagrams is a local pre-commit check,
+#     which is where it has always actually been run.
+#
+# WHAT "PRODUCTION" MEANS TODAY, WHICH IS NOT YET benhall.ca. `[amended by the
+# merge commit that deleted hugo2.yml -- ISS-16 step 1]` This is now the only
+# workflow in the repository, and the sentence it replaces said hugo2.yml still
+# built `master` to GitHub Pages. It does not; nothing does. Pages is still the
+# origin the apex resolves to, serving the last build it made, and that build
+# stays up as the fallback until ISS-16 step 2 disables Pages in the repository
+# settings.
+#
+# This workflow attaches no domains and wrangler.toml declares no `routes`, so a
+# `master` deploy here activates a Worker version served at the Worker's own
+# hostnames and moves no production traffic at all. ISS-50 attaches benhall.ca
+# and www to the Worker; ISS-17 verifies the cutover from outside. Until ISS-50,
+# the last of ISS-11's acceptance criteria -- "serves at the apex" -- is not
+# something this file can satisfy.
+
+on:
+  push:
+    branches: ["**"]
+
+# Per ref. A newer push to a branch supersedes the older run. `master` never
+# cancels in flight: a deploy interrupted between uploading assets and activating
+# the version is the one state here that is worse than a slow queue.
+concurrency:
+  group: cloudflare-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
+permissions:
+  contents: read
+
+env:
+  # Pinned, because `npx` with no version resolves to whatever is newest on the
+  # day of the build, and these are the two tools in this pipeline most able to
+  # change underneath the site without a commit.
+  #
+  # Hugo 0.166.0 extended, the latest release (2026-09-09). NOT hugo2.yml's
+  # 0.128.0, which cannot build this site at all: the rebuilt layouts use the
+  # flat `layouts/` structure introduced in 0.146 (`layouts/_partials/`,
+  # `layouts/_markup/`, `layouts/baseof.html`). This is ISS-13, and this `env`
+  # is the whole of it.
+  #
+  # `[moved forward from 0.159.0 on 2026-09-20, Ben's call]` Verified rather
+  # than assumed: every HTML file in a production build is byte-identical
+  # across the two versions except the `<meta name="generator">` tag. The RSS
+  # feeds reindent, because Hugo's embedded template changed, and one taxonomy
+  # term title casing improves ("Software-Development" -> "Software
+  # Development"). 0.166.0 also deprecates `site.LanguageCode`, which
+  # `layouts/baseof.html` used; it now calls `site.Language.Locale` and renders
+  # the same value.
+  #
+  # This no longer matches highlandhideaway.ca, which is on 0.159.0. That is a
+  # deliberate divergence, not drift: the two sites share no templates. What
+  # must not diverge is this pin and the laptop, which is why the local
+  # toolchain moved in the same change.
+  HUGO_VERSION: "0.166.0"
+  WRANGLER_VERSION: "4.135.0"
+
+  # htmltest 0.17.0, the version ISS-12 triaged every current failure against
+  # and the latest release. A link checker that changes what it considers a
+  # link is a link checker that can turn this gate red on a commit that touched
+  # no links.
+  HTMLTEST_VERSION: "0.17.0"
+
+jobs:
+  # Deliberately NOT behind `needs:`, now that there is something it could wait
+  # for. `[reaffirmed 2026-09-20 when the gate landed]` A preview is what you
+  # look at to judge a branch, and a red suite is exactly when you most want to
+  # see the page -- gating it would withhold the artefact at the moment it is
+  # most useful. It activates nothing and serves no production traffic, so it is
+  # not a deploy and the gate's reasoning does not reach it.
+  preview:
+    if: github.ref != 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      # No `submodules:`. themes/stack is still tracked in .gitmodules and is
+      # vestigial — config.toml sets no theme and the rebuilt layouts do not use
+      # it. Checking it out would only slow the run down.
+      - uses: actions/checkout@v4
+
+      # Fail loudly rather than skipping. A deploy that silently does nothing is
+      # indistinguishable from one that worked, and a mistyped secret name
+      # otherwise shows up as a green run that shipped nothing. This step is the
+      # first thing on this repository ever to use these credentials (ISS-15
+      # created them; nothing had authenticated with them), so it is also the
+      # first real test of the token's validity and its Workers Scripts:Edit
+      # scope. Note what it cannot tell you: too narrow a scope fails at the
+      # upload call, not here.
+      - name: Are the Cloudflare credentials present?
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ] || [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID must both be set as repository secrets."
+            exit 1
+          fi
+
+      - name: Install Hugo
+        run: |
+          set -euo pipefail
+          wget -q -O "${{ runner.temp }}/hugo.deb" \
+            "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
+          sudo dpkg -i "${{ runner.temp }}/hugo.deb"
+          hugo version
+
+      # No Dart Sass: the site ships plain CSS in static/, and nothing in
+      # layouts/ or assets/ is SCSS.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # No `cache: npm` and no `npm ci`. .gitignore ignores /package.json,
+      # /package-lock.json and /node_modules/ deliberately (playwright-core is a
+      # local-only tool, script/README.md), so a CI runner sees no package.json
+      # and there is nothing to install or cache. Everything arrives through the
+      # pinned `npx` calls in the Makefile and below.
+
+      # `make site`, not a bare `hugo`. Pagefind writes its index into public/
+      # after Hugo runs, and a bare `hugo` ships a site whose search silently
+      # returns nothing. The Makefile is the one definition of the build; CI
+      # running a different command is how the two drift.
+      #
+      # `make site` is `hugo -D -F`, so this preview INCLUDES drafts and
+      # future-dated content — today that is the lineage-in-the-sql fixture post
+      # (ISS-45/46). That is the point of a preview: without -D the only page
+      # exercising the diagram render hooks, cluster labels and figure
+      # treatments is invisible, and the preview stops showing the work being
+      # previewed. It is also what `make preview` shows locally, so the two
+      # agree. `[operator decision 2026-09-20 — see ISS-11]`
+      #
+      # The production `deploy` job below does NOT reuse this target; it takes
+      # the `check` job's `make site-prod` tree, which passes neither -D nor -F.
+      # Keep it that way: these two targets differing by exactly that flag pair
+      # is the only thing keeping the fixture off benhall.ca.
+      #
+      # No --baseURL override is needed, unlike hugo2.yml. Every internal link
+      # and asset in layouts/ goes through relURL, so the site is
+      # self-consistent at whatever host serves it.
+      #
+      # `[amended 2026-09-20 -- ISS-14]` This used to add "and the built HTML
+      # contains no absolute https://benhall.ca URLs at all". That is no longer
+      # true and should not be restored: ISS-14 added the one deliberate
+      # exception, `<link rel="canonical">` in layouts/baseof.html, which names
+      # the apex by design because naming the host is what a canonical tag is
+      # for. The reason above survives it -- links and assets still resolve
+      # against the serving host, so the preview still works as a preview, and
+      # the canonical is what keeps a crawler from treating the workers.dev copy
+      # as the real site. Absolute URLs otherwise appear only in the RSS feed
+      # and sitemap.xml, both of which come from baseURL.
+      - name: Build the site
+        run: make site
+
+      # `wrangler versions upload`, not `wrangler deploy`. It "uploads a new
+      # version of your Worker and returns a preview URL for each version
+      # uploaded" and activates nothing, so production is untouched by
+      # construction. --preview-alias pins a stable URL per branch at
+      # <alias>-benhall.<subdomain>.workers.dev. Preview URLs are "enabled by
+      # default when workers_dev is enabled", which is this Worker's state --
+      # wrangler.toml sets neither workers_dev nor preview_urls, and declares no
+      # routes. [developers.cloudflare.com/workers/configuration/previews/,
+      # verified 2026-09-20]
+      #
+      # `npx --yes wrangler@"$WRANGLER_VERSION"`, NOT cloudflare/wrangler-action:
+      # the action defaults to a 3.x wrangler that silently drops [assets] fields
+      # it does not understand, and the failure mode is a warning.
+      - name: Upload a preview version
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          # The alias becomes a DNS label: <alias>-benhall.<subdomain>.workers.dev.
+          # Lower-cased, non-alphanumerics folded to "-", capped well inside the
+          # 63-character limit a label allows.
+          alias=$(printf '%s' "$GITHUB_REF_NAME" \
+            | tr '[:upper:]' '[:lower:]' \
+            | sed 's/[^a-z0-9-]/-/g; s/--*/-/g; s/^-//; s/-*$//' \
+            | cut -c1-40 | sed 's/-*$//')
+          echo "Preview alias: $alias"
+          npx --yes wrangler@"$WRANGLER_VERSION" versions upload \
+            --preview-alias "$alias" 2>&1 | tee upload.log
+          {
+            echo "### Preview"
+            echo
+            echo "Branch \`$GITHUB_REF_NAME\` → alias \`$alias\`"
+            echo
+            echo "Built with \`make site\`, so drafts and future-dated content are included."
+            echo
+            grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev[^ ]*' upload.log | sort -u | sed 's/^/- /'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ---------------------------------------------------------------------------
+  # THE GATE. Builds what ships and checks it. `deploy` needs this job; nothing
+  # else does, and nothing about it is conditional. See the header for why it
+  # carries no job-level `if:`.
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Hugo
+        run: |
+          set -euo pipefail
+          wget -q -O "${{ runner.temp }}/hugo.deb" \
+            "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb"
+          sudo dpkg -i "${{ runner.temp }}/hugo.deb"
+          hugo version
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # `make site-prod`, NOT `make site`. This is the entire reason that target
+      # exists: `make site` is `hugo -D -F`, and the lineage-in-the-sql fixture
+      # post says "Test fixture for the Hugo templates. Never publish." in its
+      # own front matter. The preview job above builds the other one on purpose.
+      #
+      # site-prod passes --cleanDestinationDir, which is load-bearing rather than
+      # tidy. A bare `hugo` leaves the previous build's output in place, so a
+      # "production build" run over a directory that last held a drafts build
+      # still contains the fixtures -- measured 2026-09-20, 18 documents where a
+      # clean production build has 16. That is a gate reading two extra pages
+      # that will never ship, and it is invisible unless you count.
+      #
+      # No --baseURL override, unlike hugo2.yml. Every internal link and asset in
+      # layouts/ goes through relURL, so the site is self-consistent at whatever
+      # host serves it. The one deliberate absolute URL is `<link rel="canonical">`
+      # from ISS-14, which names the apex by design, plus sitemap.xml and the RSS
+      # feed; all three come from config.toml's baseURL and want the real host
+      # even when the bytes are being served somewhere else.
+      - name: Build what ships
+        run: make site-prod
+
+      - name: Install htmltest
+        run: |
+          set -euo pipefail
+          wget -q -O "${{ runner.temp }}/htmltest.tar.gz" \
+            "https://github.com/wjdp/htmltest/releases/download/v${HTMLTEST_VERSION}/htmltest_${HTMLTEST_VERSION}_linux_amd64.tar.gz"
+          tar -xzf "${{ runner.temp }}/htmltest.tar.gz" -C "${{ runner.temp }}" htmltest
+          sudo install -m 0755 "${{ runner.temp }}/htmltest" /usr/local/bin/htmltest
+          htmltest --version
+
+      # The gate itself. Internal links only -- .htmltest.yml carries the
+      # reasoning, and the short version is that `continue-on-error` is forbidden
+      # above `deploy`, so an external check here would make web.archive.org's
+      # uptime a precondition for shipping this site.
+      - name: Check links
+        run: make check-links
+
+      # What `deploy` will upload. Passing the tree rather than rebuilding is the
+      # difference between "the gate checked these bytes" and "the gate checked a
+      # build of this commit".
+      - name: Keep the checked tree
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-production
+          path: public/
+          retention-days: 7
+          # public/ holds no dotfiles today (checked 2026-09-20), so this changes
+          # nothing now. It is here so that the day Hugo or Pagefind starts
+          # writing one, the artifact does not quietly ship without it.
+          include-hidden-files: true
+          if-no-files-found: error
+
+  # ---------------------------------------------------------------------------
+  # PRODUCTION. Only on the default branch, only after the gate, and only ever
+  # the bytes the gate read.
+  deploy:
+    if: github.ref == 'refs/heads/master'
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      # wrangler.toml lives here, and `--message` needs the commit. public/ comes
+      # from the artifact, not from this checkout -- nothing in this job builds.
+      - uses: actions/checkout@v4
+
+      - name: Are the Cloudflare credentials present?
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ] || [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID must both be set as repository secrets."
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Take the tree the gate checked
+        uses: actions/download-artifact@v4
+        with:
+          name: site-production
+          path: public
+
+      # Belt and braces, and cheap. The artifact is built by `make site-prod` one
+      # job above, so the fixture cannot be in it -- unless someone edits that
+      # job to call `make site`, which is exactly the mistake worth catching at
+      # the last possible moment rather than in Cloudflare's asset list. The
+      # fixture's own front matter says never publish; this is the machine
+      # agreeing with it.
+      - name: Is this really the production tree?
+        run: |
+          set -euo pipefail
+          test -f public/index.html || { echo "::error::public/index.html is missing -- the artifact is not a built site."; exit 1; }
+          test -f public/pagefind/pagefind.js || { echo "::error::public/pagefind/pagefind.js is missing -- search would silently return nothing."; exit 1; }
+          for fixture in public/post/lineage-in-the-sql/index.html public/docs/crosswalk/index.html; do
+            if [ -e "$fixture" ]; then
+              echo "::error::$fixture is in the tree about to deploy. That is a draft fixture marked 'Never publish'. The build job must call 'make site-prod', not 'make site'."
+              exit 1
+            fi
+          done
+          echo "$(find public -name '*.html' | wc -l) HTML files, no fixtures."
+
+      # `wrangler deploy`, not `versions upload`: this activates. --message is
+      # what stops the Cloudflare dashboard listing every deployment as
+      # "Manually deployed" with nothing but a timestamp to choose a rollback
+      # target by `[observed 2026-09-20 in tools-portfolio]`. wrangler's own help
+      # calls it "A descriptive message for this Worker Version"; the dashboard
+      # shows it against the deployment.
+      #
+      # The subject is cut to 72 characters -- git's own convention, and it keeps
+      # the whole message short enough that the sha and run id at either end are
+      # never what gets truncated. Those two are the parts you navigate by.
+      - name: Deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          sha=$(git rev-parse --short HEAD)
+          subject=$(git log -1 --pretty=%s | cut -c1-72)
+          message="$sha $subject (run $GITHUB_RUN_ID)"
+          echo "Deployment message: $message"
+          npx --yes wrangler@"$WRANGLER_VERSION" deploy \
+            --message "$message" 2>&1 | tee deploy.log
+          {
+            echo "### Deployed"
+            echo
+            echo "\`$message\`"
+            echo
+            echo "Built by the \`check\` job with \`make site-prod\`, link-checked, and uploaded unchanged."
+            echo
+            grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev[^ ]*' deploy.log | sort -u | sed 's/^/- /' || true
+          } >> "$GITHUB_STEP_SUMMARY"

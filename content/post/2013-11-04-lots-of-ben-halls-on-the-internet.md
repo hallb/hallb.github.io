@@ -5,7 +5,7 @@ tags: ["ben hall", "internet"]
 image: "/img/flickr-2533699355-original-300x200.jpg"
 ---
 
-It's been a long time since the Ben over at [benhall.com](benhall.com) had to forward some email to me here at benhall.ca. Before I retired my obvious email address @benhall.ca due to over-spam, I'd get a helpful email from him every few weeks.
+It's been a long time since the Ben over at [benhall.com](http://www.benhall.com/) had to forward some email to me here at benhall.ca. Before I retired my obvious email address @benhall.ca due to over-spam, I'd get a helpful email from him every few weeks.
 
 The more things change, the more they stay the same.
 

@@ -8,7 +8,7 @@ layout: "about"
 lead: "I write about my experience using plain text as the source of truth, at work and in life: diagrams, ledgers, specs and project plans. Text can be read, diffed, versioned and generated into multiple outputs, and now an LLM can work with it too. I'm the Capability Lead for Core Engineering at Electric Mind, and these posts draw on that work and on personal projects."
 elsewhere:
   - name: "LinkedIn"
-    url: "#"
+    url: "https://www.linkedin.com/in/ben-hall-the-trusted-advisor/"
   - name: "GitHub"
     url: "https://github.com/hallb"
   - name: "RSS"

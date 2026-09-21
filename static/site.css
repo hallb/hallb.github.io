@@ -767,6 +767,10 @@ figcaption {
 .post-list a { font-weight: 700; line-height: 1.35; }
 .post-list p { margin: 8px 0 0; color: var(--muted); text-wrap: pretty; }
 
+/* The Archive chip on a mixed home list (ISS-51). The chip itself is
+   Archive-B's, below; only the spacing beside the title is new. */
+.post-list .chip { margin-left: 10px; }
+
 .post-list time,
 .archive-list time {
   color: var(--muted);

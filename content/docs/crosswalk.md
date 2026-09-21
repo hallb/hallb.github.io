@@ -1,6 +1,14 @@
 ---
+# Test fixture for the Hugo templates. Never publish. `[ISS-53]`
+# Crosswalk is invented; it exercises every dense element the site styles.
+#
+# draft: true is what keeps this unpublished. The 2026-10-01 date used to do
+# it, by being in the future so that only a -F build rendered it -- which
+# works until the date arrives, and then the page publishes itself with no
+# commit involved. Do not remove the flag and rely on the date again.
 title: Crosswalk
 date: 2026-10-01
+draft: true
 summary: Reference page for a fictional record-linkage tool. Exercises every dense element the site has to style.
 ---
 

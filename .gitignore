@@ -11,6 +11,17 @@ hugo_stats.json
 .idea/
 .vscode/
 
+# script/ tooling: playwright-core is installed locally, per script/README.md,
+# and the audits write their screenshots here.
+/node_modules/
+/package.json
+/package-lock.json
+/.screenshots/
+
+# htmltest's response cache (ISS-12). It is a cache, not a record; a stale
+# entry is the one way a link check can be wrong in the reassuring direction.
+/tmp/
+
 # Build output
 _site/
 .sass-cache/

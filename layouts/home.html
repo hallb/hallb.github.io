@@ -1,14 +1,19 @@
 {{ define "main" }}
-{{- /* Home-B: Writing only, newest first. Archive posts live on the archive
-       page, so the label partial decides what shows here. */ -}}
+{{- /* Home-B: the blog roll, newest first. The label partial decides which
+       register an entry belongs to, and params.homeShowsArchive decides
+       whether the Archive register appears here at all (ISS-51). Archive
+       entries carry the chip so the two registers stay distinguishable in
+       one list. Turning the flag off leaves Writing only, which is what
+       this template did before. */ -}}
 <main id="main" class="page page--home">
 <h1 class="thesis">{{ site.Params.thesis }} <span>{{ site.Params.thesisLine }}</span></h1>
 <ul class="post-list">
   {{- range where site.RegularPages "Section" "post" }}
-  {{- if eq (partial "section-label.html" .) "Writing" }}
+  {{- $label := partial "section-label.html" . }}
+  {{- if or (eq $label "Writing") (and site.Params.homeShowsArchive (eq $label "Archive")) }}
   <li>
     <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>
-    <div><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ with .Params.cluster }}<span class="cluster">{{ . }}</span>{{ end }}</div>
+    <div><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ if eq $label "Archive" }}<span class="chip">Archive</span>{{ end }}{{ with .Params.cluster }}<span class="cluster">{{ . }}</span>{{ end }}</div>
   </li>
   {{- end }}
   {{- end }}

@@ -1,8 +1,9 @@
 # script/
 
-Tools for checking the generated site against the hand-built reference in
-`benhall.ca-planning/design-system/`. Written for ISS-46 step 4 and kept
-because the checks are worth repeating whenever the templates change.
+Tools for checking the generated site, against the hand-built reference in
+`benhall.ca-planning/design-system/` and against the two checklists it has to
+pass. Written for ISS-46 step 4 and ISS-42, and kept because the checks are
+worth repeating whenever the templates change.
 
 ## What each one answers
 
@@ -11,6 +12,37 @@ because the checks are worth repeating whenever the templates change.
 | `compare-design.js` | Does the generated page match the reference at 1280px and 400px, light and dark? Does anything scroll sideways? |
 | `crop-figures.js` | Does each diagram follow the theme, judged on its own rather than from a full-page thumbnail? |
 | `audit-figure-colours.py` | Which colours in an inlined figure will not follow the theme? |
+| `audit-a11y.js` | Does every page meet its contrast, focus and keyboard promises? (ISS-42) |
+| `audit-anti-patterns.js` | Does the built site pass ISS-44's anti-patterns checklist? (ISS-42) |
+
+The two audits are ISS-42's last two acceptance criteria, and they are written
+to be re-run rather than read once. Both take eight page types at 1280px and
+400px in light and dark — 32 frames — and both exit non-zero on a failure. The
+eighth is `404.html`, which Cloudflare serves for every unknown path (ISS-48).
+
+`audit-a11y.js` measures contrast on rendered colour rather than on the
+stylesheet hexes: every text-bearing element is read back through
+`getComputedStyle` and its background composited down the ancestor chain. A
+clean run prints zeroes, which looks the same as a run that measured nothing,
+so `SELFTEST=1` injects known-bad CSS and the run should then fail loudly.
+
+`audit-anti-patterns.js` scores fourteen of the checklist's sixteen rows
+mechanically, adds a sideways-scroll check and a lead measure of its own, and
+names the two it cannot measure: the hero-and-call-to-action row, which needs
+eyes on the render, and diagrams with literal colours, which
+`audit-figure-colours.py` answers. Every row passes.
+
+Its two measure rows gate on the geometry that sets the measure — prose 18px in
+560px at 1280 and 17px in 360px at 400, the admonition column 44px narrower at
+15px — rather than on a cap applied to each line. The 65–75 band is a property
+of the column: ragged-right wrapping in proportional type will occasionally fit
+an extra narrow character whatever the column is, and admonition bodies sit
+outside the band by
+[decision #8](../../benhall.ca-planning/docs/02-solution/open-decisions.md).
+A content edit that wraps long therefore does not trip the check; a change to
+the body size or the measure does. It prints characters per line for prose,
+lead and admonitions on every run either way, so the accepted numbers stay in
+front of whoever runs it.
 
 ## Setup
 
